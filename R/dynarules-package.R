@@ -11,5 +11,7 @@
 # ggplot2 aes() variables used in plot methods
 utils::globalVariables(c(
   "support", "confidence", "lift", "lift_mean", "lift_lower", "lift_upper",
-  "lift_null", "recovery", "rule", "significant", "w"
+  "lift_null", "recovery", "rule", "significant", "w",
+  "antecedent", "consequent", "group", "item", "order", "position",
+  "x", "y", "xend", "yend"
 ))

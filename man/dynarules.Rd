@@ -10,14 +10,17 @@ dynarules(
   min_support = 0.1,
   min_confidence = 0.5,
   min_lift = 1,
+  min_length = 2L,
   max_length = 5L,
+  appearance = NULL,
   actor = NULL,
   action = NULL,
   time = NULL,
   session = NULL,
   unit = c("session", "actor", "window"),
   window = NULL,
-  step = NULL
+  step = NULL,
+  weights = NULL
 )
 }
 \arguments{
@@ -34,10 +37,23 @@ transactions containing the itemset/pattern. Default 0.1.}
 
 \item{min_lift}{Numeric >= 0. Default 1.}
 
+\item{min_length}{Integer. Minimum number of items in a rule
+(antecedent plus consequent). Default \code{2}.}
+
 \item{max_length}{Integer >= 2. Maximum itemset/pattern size. Default 5.}
+
+\item{appearance}{Optional list restricting where items may occur:
+\code{lhs} and \code{rhs} whitelist the items allowed on each side, and \code{none}
+drops items from the data before mining. \code{NULL} (default) places no
+restriction.}
 
 \item{actor, action, time, session, unit, window, step}{Event-log grammar,
 forwarded to \code{\link[=transactions]{transactions()}} when \code{x} is raw data.}
+
+\item{weights}{Optional numeric vector of transaction weights, one per
+transaction. Support becomes weighted support: the share of total
+weight rather than the share of transactions. \code{NULL} (default)
+weights every transaction equally.}
 }
 \value{
 An object of class \code{"dynarules"}:

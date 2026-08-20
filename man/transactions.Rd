@@ -12,7 +12,8 @@ transactions(
   session = NULL,
   unit = c("session", "actor", "window"),
   window = NULL,
-  step = NULL
+  step = NULL,
+  weights = NULL
 )
 }
 \arguments{
@@ -48,6 +49,10 @@ session; the default), \code{"actor"} (an actor's full stream), or
 
 \item{step}{Integer or NULL. Window step; NULL means tumbling windows
 (\code{step = window}).}
+
+\item{weights}{Optional numeric vector of transaction weights, one per
+transaction, for weighted support. \code{NULL} (default) weights every
+transaction equally.}
 }
 \value{
 An object of class \code{"dyna_transactions"}:

@@ -32,6 +32,9 @@
 #'   events within each actor stream. If NULL, input row order is kept.
 #' @param session Character or NULL. Column name(s) identifying the session
 #'   an event belongs to (long input only).
+#' @param weights Optional numeric vector of transaction weights, one per
+#'   transaction, for weighted support. `NULL` (default) weights every
+#'   transaction equally.
 #' @param unit Character. What one transaction is: `"session"` (actor x
 #'   session; the default), `"actor"` (an actor's full stream), or
 #'   `"window"` (consecutive-event windows within each actor stream).
@@ -68,8 +71,28 @@ transactions <- function(data,
                          session = NULL,
                          unit = c("session", "actor", "window"),
                          window = NULL,
-                         step = NULL) {
+                         step = NULL,
+                         weights = NULL) {
   unit <- match.arg(unit)
+  tr <- .tr_dispatch(data, actor = actor, action = action, time = time,
+                     session = session, unit = unit, window = window,
+                     step = step)
+  if (is.null(weights)) return(tr)
+  stopifnot(is.numeric(weights), length(weights) == tr$n_transactions,
+            all(weights >= 0), all(is.finite(weights)))
+  if (sum(weights) <= 0) {
+    stop("`weights` must not sum to zero.", call. = FALSE)
+  }
+  tr$weights <- as.numeric(weights)
+  tr
+}
+
+
+# The input-shape dispatch: matrix, list of sequences, wide data.frame, or
+# the event-log grammar.
+#' @noRd
+.tr_dispatch <- function(data, actor, action, time, session, unit, window,
+                         step) {
 
   if (is.matrix(data)) {
     return(.tr_from_matrix(data))

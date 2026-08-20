@@ -13,6 +13,12 @@
 #'   of these items on the chosen `side`.
 #' @param side Character. Where `items` must appear: `"any"` (default),
 #'   `"antecedent"`, or `"consequent"`.
+#' @param significant Keep only rules that beat independence; see
+#'   [is_significant()]. Default `FALSE`.
+#' @param maximal Keep only rules built on a maximal pattern; see
+#'   [is_maximal()]. Default `FALSE`.
+#' @param alpha,adjust Passed to [is_significant()] when
+#'   `significant = TRUE`.
 #' @param redundant Logical. `TRUE` (default) keeps all rules. `FALSE`
 #'   drops rules dominated by a more general rule: same consequent, the
 #'   general antecedent contained in the specific one, and confidence at
@@ -40,6 +46,10 @@ rules <- function(x,
                   items = NULL,
                   side = c("any", "antecedent", "consequent"),
                   redundant = TRUE,
+                  significant = FALSE,
+                  maximal = FALSE,
+                  alpha = 0.05,
+                  adjust = "BH",
                   top = NULL,
                   by = c("lift", "confidence", "support")) {
   stopifnot(inherits(x, "dynarules"))
@@ -64,6 +74,10 @@ rules <- function(x,
       consequent = cons_hit
     )
   }
+
+  if (significant) keep <- keep & is_significant(x, alpha = alpha,
+                                                 adjust = adjust)
+  if (maximal) keep <- keep & is_maximal(x)
 
   r <- r[keep, , drop = FALSE]
   if (!redundant && nrow(r) > 1L) {

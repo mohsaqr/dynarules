@@ -12,6 +12,10 @@ rules(
   items = NULL,
   side = c("any", "antecedent", "consequent"),
   redundant = TRUE,
+  significant = FALSE,
+  maximal = FALSE,
+  alpha = 0.05,
+  adjust = "BH",
   top = NULL,
   by = c("lift", "confidence", "support")
 )
@@ -32,6 +36,15 @@ of these items on the chosen \code{side}.}
 drops rules dominated by a more general rule: same consequent, the
 general antecedent contained in the specific one, and confidence at
 least as high.}
+
+\item{significant}{Keep only rules that beat independence; see
+\code{\link[=is_significant]{is_significant()}}. Default \code{FALSE}.}
+
+\item{maximal}{Keep only rules built on a maximal pattern; see
+\code{\link[=is_maximal]{is_maximal()}}. Default \code{FALSE}.}
+
+\item{alpha, adjust}{Passed to \code{\link[=is_significant]{is_significant()}} when
+\code{significant = TRUE}.}
 
 \item{top}{Integer or NULL. Keep the top N rules after sorting.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{print.dynarules_boot}
 \alias{print.dynarules_boot}
-\title{Print Method for dynarules_boot}
+\title{Print Method for Bootstrapped Rules}
 \usage{
 \method{print}{dynarules_boot}(x, ...)
 }
@@ -15,5 +15,5 @@
 \code{x}, invisibly.
 }
 \description{
-Print Method for dynarules_boot
+Print Method for Bootstrapped Rules
 }

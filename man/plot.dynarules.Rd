@@ -2,21 +2,48 @@
 % Please edit documentation in R/methods.R
 \name{plot.dynarules}
 \alias{plot.dynarules}
-\title{Plot Method for dynarules}
+\title{Plot Mined Rules}
 \usage{
-\method{plot}{dynarules}(x, top = NULL, ...)
+\method{plot}{dynarules}(
+  x,
+  type = c("scatter", "two-key", "matrix", "grouped", "graph", "paracoord"),
+  measure = "lift",
+  top = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{dynarules} object.}
+
+\item{type}{The view to draw: \code{"scatter"} (default) plots support
+against confidence coloured by \code{measure}; \code{"two-key"} colours the
+same scatter by rule order instead; \code{"matrix"} tiles antecedent
+against consequent; \code{"grouped"} collapses antecedents to their lead
+item; \code{"graph"} draws the item network on a circle; \code{"paracoord"}
+draws each rule as a path across item positions.}
+
+\item{measure}{Measure to colour by; any name from \code{\link[=list_measures]{list_measures()}}.
+Default \code{"lift"}. Ignored by \code{"two-key"}.}
 
 \item{top}{Integer or NULL. Plot only the top N rules by lift.}
 
 \item{...}{Ignored.}
 }
 \value{
-A \code{ggplot} object, invisibly.
+The \code{ggplot} object, invisibly.
 }
 \description{
-Support x confidence scatter of the mined rules, colored by lift with
-the diverging midpoint at lift = 1 (independence).
+Six standard views of a rule set. \code{"scatter"} and \code{"two-key"} show the
+whole set at a glance; \code{"matrix"} and \code{"grouped"} show which items pair
+with which; \code{"graph"} and \code{"paracoord"} show the item-level structure.
+}
+\examples{
+fit <- dynarules(list(c("a", "b", "c"), c("a", "b"), c("a", "c")),
+                 min_support = 0.3, min_confidence = 0.3)
+plot(fit)
+plot(fit, type = "graph")
+plot(fit, type = "matrix", measure = "confidence")
+}
+\seealso{
+\code{\link[=measures]{measures()}}, \code{\link[=rules]{rules()}}
 }

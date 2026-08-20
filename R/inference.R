@@ -170,14 +170,19 @@ permute_rules <- function(x, iter = 200L, correction = "BH", seed = NULL) {
   antes <- strsplit(x$rules$antecedent, sep, fixed = TRUE)
   conss <- strsplit(x$rules$consequent, sep, fixed = TRUE)
 
+  # Permutation preserves row order, so transaction weights stay aligned and
+  # the null is computed on the same weighted scale as the observed rules.
+  w_perm <- .dr_weights(x$transactions)
+  n_perm <- sum(w_perm)
+
   lift_fn <- if (x$type == "sequential") {
     function(seqs, set_mat) {
       vapply(seq_along(antes), function(i) {
         full <- c(antes[[i]], conss[[i]])
-        sup_ab <- .dr_count_pattern(seqs, full)
-        sup_a <- .dr_count_pattern(seqs, antes[[i]])
-        sup_b <- .dr_count_pattern(seqs, conss[[i]])
-        n <- length(seqs)
+        sup_ab <- .dr_count_pattern(seqs, full, w_perm)
+        sup_a <- .dr_count_pattern(seqs, antes[[i]], w_perm)
+        sup_b <- .dr_count_pattern(seqs, conss[[i]], w_perm)
+        n <- n_perm
         if (sup_a == 0L || sup_b == 0L) return(0)
         (sup_ab / n) / ((sup_a / n) * (sup_b / n))
       }, numeric(1))

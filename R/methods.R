@@ -44,42 +44,64 @@ summary.dynarules <- function(object, ...) {
 }
 
 
-#' Plot Method for dynarules
+#' Plot Mined Rules
 #'
-#' @description
-#' Support x confidence scatter of the mined rules, colored by lift with
-#' the diverging midpoint at lift = 1 (independence).
+#' Six standard views of a rule set. `"scatter"` and `"two-key"` show the
+#' whole set at a glance; `"matrix"` and `"grouped"` show which items pair
+#' with which; `"graph"` and `"paracoord"` show the item-level structure.
 #'
 #' @param x A `dynarules` object.
+#' @param type The view to draw: `"scatter"` (default) plots support
+#'   against confidence coloured by `measure`; `"two-key"` colours the
+#'   same scatter by rule order instead; `"matrix"` tiles antecedent
+#'   against consequent; `"grouped"` collapses antecedents to their lead
+#'   item; `"graph"` draws the item network on a circle; `"paracoord"`
+#'   draws each rule as a path across item positions.
+#' @param measure Measure to colour by; any name from [list_measures()].
+#'   Default `"lift"`. Ignored by `"two-key"`.
 #' @param top Integer or NULL. Plot only the top N rules by lift.
 #' @param ... Ignored.
-#' @return A `ggplot` object, invisibly.
+#' @return The `ggplot` object, invisibly.
+#' @examples
+#' fit <- dynarules(list(c("a", "b", "c"), c("a", "b"), c("a", "c")),
+#'                  min_support = 0.3, min_confidence = 0.3)
+#' plot(fit)
+#' plot(fit, type = "graph")
+#' plot(fit, type = "matrix", measure = "confidence")
+#' @seealso [measures()], [rules()]
 #' @export
-plot.dynarules <- function(x, top = NULL, ...) {
-  df <- rules(x, top = top)
-  if (nrow(df) == 0L) {
+plot.dynarules <- function(x, type = c("scatter", "two-key", "matrix",
+                                       "grouped", "graph", "paracoord"),
+                           measure = "lift", top = NULL, ...) {
+  stopifnot(inherits(x, "dynarules"))
+  type <- match.arg(type)
+  if (!measure %in% names(.DR_MEASURES)) {
+    stop("Unknown measure: ", measure, ". See list_measures().",
+         call. = FALSE)
+  }
+  r <- .dr_plot_data(x, measure, top)
+  if (nrow(r) == 0L) {
     message("No rules to plot.")
     return(invisible(NULL))
   }
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = support, y = confidence,
-                                        color = lift)) +
-    ggplot2::geom_point(size = 3, alpha = 0.8) +
-    ggplot2::scale_color_gradient2(low = "#D33F6A", mid = "grey85",
-                                   high = "#4A6FE3", midpoint = 1) +
-    ggplot2::labs(
-      x = "Support", y = "Confidence", color = "Lift",
-      title = sprintf("%s rules (%d)",
-                      if (x$type == "sequential") "Sequential" else
-                        "Co-occurrence",
-                      nrow(df))
-    ) +
-    ggplot2::theme_minimal(base_size = 12)
+  sep <- .dr_sep(x)
+  title <- sprintf("%s rules (%d)",
+                   if (x$type == "sequential") "Sequential" else
+                     "Co-occurrence", nrow(r))
+  p <- switch(type,
+    scatter   = .dr_plot_scatter(r, measure, title),
+    "two-key" = .dr_plot_twokey(r, sep, title),
+    matrix    = .dr_plot_matrix(r, measure, title),
+    grouped   = .dr_plot_grouped(r, sep, measure, title),
+    graph     = .dr_plot_graph(r, sep, measure, title),
+    paracoord = .dr_plot_paracoord(r, sep, measure, title)
+  )
   print(p)
   invisible(p)
 }
 
 
-#' Print Method for dynarules_boot
+#' Print Method for Bootstrapped Rules
 #'
 #' @param x A `dynarules_boot` object.
 #' @param ... Ignored.

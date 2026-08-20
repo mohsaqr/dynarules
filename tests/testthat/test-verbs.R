@@ -40,9 +40,12 @@ test_that("as.data.frame returns the tidy rules table", {
   fit <- dynarules(toy, min_support = 0.2, min_confidence = 0, min_lift = 0)
   df <- as.data.frame(fit)
   expect_s3_class(df, "data.frame")
+  # support_antecedent / support_consequent are the two supports every
+  # interest measure is derived from; measures() reads them from here.
   expect_equal(names(df),
                c("antecedent", "consequent", "support", "confidence",
-                 "lift", "conviction", "count", "n_transactions"))
+                 "lift", "conviction", "support_antecedent",
+                 "support_consequent", "count", "n_transactions"))
 })
 
 test_that("as_network builds a directed cograph-compatible object", {

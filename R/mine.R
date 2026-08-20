@@ -26,6 +26,16 @@
 #'   transactions containing the itemset/pattern. Default 0.1.
 #' @param min_confidence Numeric between 0 and 1. Default 0.5.
 #' @param min_lift Numeric >= 0. Default 1.
+#' @param weights Optional numeric vector of transaction weights, one per
+#'   transaction. Support becomes weighted support: the share of total
+#'   weight rather than the share of transactions. `NULL` (default)
+#'   weights every transaction equally.
+#' @param min_length Integer. Minimum number of items in a rule
+#'   (antecedent plus consequent). Default `2`.
+#' @param appearance Optional list restricting where items may occur:
+#'   `lhs` and `rhs` whitelist the items allowed on each side, and `none`
+#'   drops items from the data before mining. `NULL` (default) places no
+#'   restriction.
 #' @param max_length Integer >= 2. Maximum itemset/pattern size. Default 5.
 #' @param actor,action,time,session,unit,window,step Event-log grammar,
 #'   forwarded to [transactions()] when `x` is raw data.
@@ -71,14 +81,17 @@ dynarules <- function(x,
                       min_support = 0.1,
                       min_confidence = 0.5,
                       min_lift = 1,
+                      min_length = 2L,
                       max_length = 5L,
+                      appearance = NULL,
                       actor = NULL,
                       action = NULL,
                       time = NULL,
                       session = NULL,
                       unit = c("session", "actor", "window"),
                       window = NULL,
-                      step = NULL) {
+                      step = NULL,
+                      weights = NULL) {
   type <- match.arg(type)
   stopifnot(
     is.numeric(min_support), length(min_support) == 1L,
@@ -86,22 +99,28 @@ dynarules <- function(x,
     is.numeric(min_confidence), length(min_confidence) == 1L,
     min_confidence >= 0, min_confidence <= 1,
     is.numeric(min_lift), length(min_lift) == 1L, min_lift >= 0,
-    is.numeric(max_length), length(max_length) == 1L, max_length >= 2
+    is.numeric(max_length), length(max_length) == 1L, max_length >= 2,
+    is.numeric(min_length), length(min_length) == 1L, min_length >= 2,
+    min_length <= max_length
   )
   max_length <- as.integer(max_length)
+  min_length <- as.integer(min_length)
+  appearance <- .dr_check_appearance(appearance)
 
   tr <- if (inherits(x, "dyna_transactions")) x else {
     transactions(x, actor = actor, action = action, time = time,
                  session = session, unit = unit, window = window,
-                 step = step)
+                 step = step, weights = weights)
   }
+  if (length(appearance$none) > 0L) tr <- .dr_drop_items(tr, appearance$none)
   if (type == "sequential" && is.null(tr$sequences)) {
     stop("Sequential mining needs ordered sequences; this transaction set ",
          "was built from a binary matrix (set form only).", call. = FALSE)
   }
 
   params <- list(min_support = min_support, min_confidence = min_confidence,
-                 min_lift = min_lift, max_length = max_length)
+                 min_lift = min_lift, min_length = min_length,
+                 max_length = max_length, appearance = appearance)
 
   mined <- if (type == "cooccurrence") {
     .mine_cooccurrence(tr, params)
@@ -115,11 +134,43 @@ dynarules <- function(x,
     type = type,
     items = tr$items,
     n_transactions = tr$n_transactions,
+    total_weight = sum(.dr_weights(tr)),
     params = params,
     transactions = tr
   ), class = "dynarules")
 }
 
+
+# `appearance` restricts where items may show up: `lhs`/`rhs` whitelist the
+# antecedent/consequent side, `none` drops items from the data entirely.
+#' @noRd
+.dr_check_appearance <- function(appearance) {
+  if (is.null(appearance)) {
+    return(list(lhs = NULL, rhs = NULL, none = NULL))
+  }
+  stopifnot(is.list(appearance))
+  unknown <- setdiff(names(appearance), c("lhs", "rhs", "none"))
+  if (length(unknown) > 0L) {
+    stop("`appearance` accepts only lhs, rhs and none; got: ",
+         paste(unknown, collapse = ", "), call. = FALSE)
+  }
+  stopifnot(all(vapply(appearance, is.character, logical(1))))
+  list(lhs = appearance$lhs, rhs = appearance$rhs, none = appearance$none)
+}
+
+#' @noRd
+.dr_drop_items <- function(tr, none) {
+  keep <- setdiff(tr$items, none)
+  if (length(keep) == 0L) {
+    stop("`appearance$none` removed every item.", call. = FALSE)
+  }
+  tr$matrix <- tr$matrix[, keep, drop = FALSE]
+  tr$items <- keep
+  if (!is.null(tr$sequences)) {
+    tr$sequences <- lapply(tr$sequences, function(s) s[s %in% keep])
+  }
+  tr
+}
 
 # ---- Shared frequent-set bookkeeping ----
 
@@ -170,6 +221,7 @@ dynarules <- function(x,
     antecedent = character(0), consequent = character(0),
     support = numeric(0), confidence = numeric(0),
     lift = numeric(0), conviction = numeric(0),
+    support_antecedent = numeric(0), support_consequent = numeric(0),
     count = integer(0), n_transactions = integer(0),
     stringsAsFactors = FALSE
   )
@@ -181,10 +233,14 @@ dynarules <- function(x,
 #' @noRd
 .mine_cooccurrence <- function(tr, params) {
   set_mat <- tr$matrix
-  n_trans <- tr$n_transactions
-  min_count <- ceiling(params$min_support * n_trans)
+  w <- .dr_weights(tr)
+  # Weighted support: the denominator is total weight, and every count is a
+  # weight sum. With the default unit weights this is exactly the unweighted
+  # computation, so there is one code path rather than two.
+  n_trans <- sum(w)
+  min_count <- params$min_support * n_trans
 
-  item_counts <- colSums(set_mat)
+  item_counts <- colSums(set_mat * w)
   freq_mask <- item_counts >= min_count
   items <- tr$items[freq_mask]
   if (length(items) == 0L) {
@@ -202,7 +258,7 @@ dynarules <- function(x,
 
   # Level 2 in one matrix product.
   if (params$max_length >= 2L && length(items) >= 2L) {
-    co <- crossprod(set_mat * 1L)
+    co <- crossprod(set_mat * 1L, set_mat * w)
     pair_idx <- which(upper.tri(co) & co >= min_count, arr.ind = TRUE)
     if (nrow(pair_idx) > 0L) {
       levels_list[[2L]] <- lapply(seq_len(nrow(pair_idx)), function(r) {
@@ -228,7 +284,7 @@ dynarules <- function(x,
     if (length(candidates) == 0L) break
 
     freq_k <- Filter(Negate(is.null), lapply(candidates, function(cand) {
-      cnt <- sum(rowSums(set_mat[, cand, drop = FALSE]) == length(cand))
+      cnt <- sum(w[rowSums(set_mat[, cand, drop = FALSE]) == length(cand)])
       if (cnt < min_count) return(NULL)
       list(items = cand, count = cnt, support = cnt / n_trans)
     }))
@@ -279,19 +335,20 @@ dynarules <- function(x,
 
 
 #' @noRd
-.dr_count_pattern <- function(seqs, p) {
-  sum(vapply(seqs, .dr_contains, logical(1), p = p))
+.dr_count_pattern <- function(seqs, p, w) {
+  sum(w[vapply(seqs, .dr_contains, logical(1), p = p)])
 }
 
 
 #' @noRd
 .mine_sequential <- function(tr, params) {
   seqs <- tr$sequences
-  n_trans <- tr$n_transactions
-  min_count <- ceiling(params$min_support * n_trans)
+  w <- .dr_weights(tr)
+  n_trans <- sum(w)
+  min_count <- params$min_support * n_trans
 
   # Level 1: containment of a single item == presence in the set matrix.
-  item_counts <- colSums(tr$matrix)
+  item_counts <- colSums(tr$matrix * w)
   freq_mask <- item_counts >= min_count
   items <- tr$items[freq_mask]
   if (length(items) == 0L) {
@@ -312,7 +369,7 @@ dynarules <- function(x,
     freq2 <- Filter(Negate(is.null),
                     lapply(seq_len(nrow(grid)), function(r) {
       p <- c(grid$a[r], grid$b[r])
-      cnt <- .dr_count_pattern(seqs, p)
+      cnt <- .dr_count_pattern(seqs, p, w)
       if (cnt < min_count) return(NULL)
       list(items = p, count = cnt, support = cnt / n_trans)
     }))
@@ -330,7 +387,7 @@ dynarules <- function(x,
     if (length(candidates) == 0L) break
 
     freq_k <- Filter(Negate(is.null), lapply(candidates, function(cand) {
-      cnt <- .dr_count_pattern(seqs, cand)
+      cnt <- .dr_count_pattern(seqs, cand, w)
       if (cnt < min_count) return(NULL)
       list(items = cand, count = cnt, support = cnt / n_trans)
     }))
@@ -384,9 +441,13 @@ dynarules <- function(x,
     levels_list[[k]]
   }), recursive = FALSE)
 
+  app <- params$appearance
+  min_length <- if (is.null(params$min_length)) 2L else params$min_length
+
   rows <- lapply(higher, function(fi) {
     itemset <- fi$items
     k <- length(itemset)
+    if (k < min_length) return(NULL)
     splits <- if (ordered) {
       lapply(seq_len(k - 1L), function(j) {
         list(ante = itemset[seq_len(j)], cons = itemset[seq(j + 1L, k)])
@@ -397,6 +458,13 @@ dynarules <- function(x,
           list(ante = itemset[idx], cons = itemset[-idx])
         })
       }), recursive = FALSE)
+    }
+
+    if (!is.null(app$lhs) || !is.null(app$rhs)) {
+      splits <- Filter(function(sp) {
+        (is.null(app$lhs) || all(sp$ante %in% app$lhs)) &&
+          (is.null(app$rhs) || all(sp$cons %in% app$rhs))
+      }, splits)
     }
 
     kept <- lapply(splits, function(sp) {
@@ -415,7 +483,11 @@ dynarules <- function(x,
         confidence = confidence,
         lift = lift,
         conviction = conviction,
-        count = as.integer(fi$count),
+        support_antecedent = sup_a,
+        support_consequent = sup_b,
+        count = if (isTRUE(all.equal(fi$count, round(fi$count)))) {
+          as.integer(round(fi$count))
+        } else fi$count,
         n_transactions = n_trans,
         stringsAsFactors = FALSE
       )
