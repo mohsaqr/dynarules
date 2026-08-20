@@ -48,11 +48,22 @@ test_that("as.data.frame returns the tidy rules table", {
                  "support_consequent", "count", "n_transactions"))
 })
 
-test_that("as_network builds a directed cograph-compatible object", {
+test_that("as_network builds a cograph-compatible object", {
   fit <- dynarules(toy, min_support = 0.2, min_confidence = 0, min_lift = 0)
   net <- as_network(fit)
   expect_true(inherits(net, "cograph_network"))
-  expect_true(net$directed)
+  # The default weight is lift, which is symmetric for co-occurrence rules,
+  # so the network is undirected: arrows would claim a direction the numbers
+  # do not carry. Confidence is asymmetric and does give a directed network.
+  expect_false(net$directed)
+  # `toy` is perfectly balanced -- every item in 4 of 5 rows, every pair in 3
+  # -- so even confidence is symmetric here. Direction needs data that is
+  # actually lopsided: `a` never occurs without `b`, but `b` often occurs
+  # alone, so conf(a => b) is 1 while conf(b => a) is not.
+  skew <- list(c("a", "b"), c("a", "b"), c("b"), c("b"), c("b", "c"))
+  sfit <- dynarules(skew, min_support = 0.2, min_confidence = 0, min_lift = 0)
+  expect_true(as_network(sfit, weight = "confidence")$directed)
+  expect_false(as_network(sfit, weight = "lift")$directed)
   expect_equal(dim(net$weights), c(3L, 3L))
   expect_equal(net$nodes$label, c("a", "b", "c"))
   expect_true(is.integer(net$edges$from))

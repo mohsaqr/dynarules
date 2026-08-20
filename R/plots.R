@@ -94,50 +94,23 @@
                                                        hjust = 1))
 }
 
-# Item-level graph: every antecedent item is linked to every consequent
-# item, edge weight aggregated over the rules that produced it. Items sit
-# on a circle, so no layout engine is needed.
+# The graph view is cograph's job, not ours: as_network() already emits a
+# cograph_network, so this hands the object over rather than re-implementing
+# a layout. cograph is Suggests-only, hence the guard.
 #' @noRd
-.dr_plot_graph <- function(r, sep, measure, title) {
-  sides <- .dr_sides(r, sep)
-  reps <- lengths(sides$ante) * lengths(sides$cons)
-  edges <- data.frame(
-    from = unlist(lapply(seq_len(nrow(r)), function(i) {
-      rep(sides$ante[[i]], each = length(sides$cons[[i]]))
-    })),
-    to = unlist(lapply(seq_len(nrow(r)), function(i) {
-      rep(sides$cons[[i]], times = length(sides$ante[[i]]))
-    })),
-    w = rep(r$w, reps),
-    stringsAsFactors = FALSE
-  )
-  edges <- stats::aggregate(w ~ from + to, data = edges, FUN = mean)
-
-  items <- sort(unique(c(edges$from, edges$to)))
-  ang <- stats::setNames(
-    seq(0, 2 * pi, length.out = length(items) + 1L)[seq_along(items)], items)
-  nodes <- data.frame(item = items, x = cos(ang), y = sin(ang),
-                      stringsAsFactors = FALSE)
-  edges$x <- cos(ang[edges$from]);    edges$y <- sin(ang[edges$from])
-  edges$xend <- cos(ang[edges$to]);   edges$yend <- sin(ang[edges$to])
-
-  ggplot2::ggplot() +
-    ggplot2::geom_curve(
-      data = edges,
-      ggplot2::aes(x = x, y = y, xend = xend, yend = yend, colour = w),
-      curvature = 0.2, alpha = 0.7, linewidth = 0.7,
-      arrow = grid::arrow(length = grid::unit(6, "pt"), type = "closed")) +
-    .dr_fill_lift("colour") +
-    ggplot2::geom_point(data = nodes, ggplot2::aes(x = x, y = y),
-                        size = 5, colour = "grey30") +
-    ggplot2::geom_text(data = nodes,
-                       ggplot2::aes(x = x * 1.15, y = y * 1.15, label = item),
-                       size = 4) +
-    ggplot2::coord_equal(clip = "off") +
-    ggplot2::labs(colour = measure, title = title,
-                  subtitle = "Items linked antecedent to consequent") +
-    ggplot2::theme_void(base_size = 12)
+.dr_plot_graph <- function(x, measure, top, level = "item", key = TRUE,
+                           ...) {
+  if (!requireNamespace("cograph", quietly = TRUE)) {
+    stop("plot(type = \"graph\") draws through cograph. Install it with ",
+         "install.packages(\"cograph\"), or use as_network() to get the ",
+         "network object and plot it however you like.", call. = FALSE)
+  }
+  net <- as_network(x, weight = measure, top = top, level = level)
+  out <- cograph::splot(net, ...)
+  if (level == "rule" && isTRUE(key)) rule_key(net)
+  invisible(out)
 }
+
 
 # Parallel coordinates: each rule is a path across item positions, ending
 # at its consequent.

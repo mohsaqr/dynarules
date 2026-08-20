@@ -1,6 +1,6 @@
 Package: dynarules
 Title: Association and Sequential Rule Mining for Temporal Event Data
-Version: 0.3.0
+Version: 0.4.0
 Authors@R:
     person("Mohammed", "Saqr", email = "ueflaunit@gmail.com",
            role = c("aut", "cre"))
@@ -24,7 +24,6 @@ RoxygenNote: 7.3.3
 Depends:
     R (>= 3.5.0)
 Imports:
-    grid,
     ggplot2,
     stats,
     utils

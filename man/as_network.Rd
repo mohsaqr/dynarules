@@ -6,21 +6,75 @@
 \usage{
 as_network(
   x,
-  weight = c("lift", "confidence", "support"),
+  weight = "lift",
   aggregate = c("max", "mean", "sum"),
-  top = NULL
+  top = NULL,
+  directed = NULL,
+  level = c("item", "rule"),
+  size_by = "support",
+  palette = "sequential",
+  layout = "spring",
+  label_rules = FALSE,
+  node_size_range = c(4, 15),
+  edge_width = 0.5,
+  edge_alpha = 1
 )
 }
 \arguments{
 \item{x}{A \code{dynarules} object.}
 
-\item{weight}{Character. Which rule metric becomes the edge weight:
-\code{"lift"} (default), \code{"confidence"}, or \code{"support"}.}
+\item{weight}{Character. Which rule metric becomes the edge weight: any
+measure from \code{\link[=list_measures]{list_measures()}}, e.g. \code{"lift"} (default),
+\code{"confidence"}, \code{"support"}, \code{"kappa"}.}
 
 \item{aggregate}{Character. How parallel edges combine: \code{"max"}
 (default), \code{"mean"}, or \code{"sum"}.}
 
 \item{top}{Integer or NULL. Use only the top N rules by lift.}
+
+\item{directed}{Logical or \code{NULL}. \code{NULL} (default) decides from the
+data: sequential rules are always directed, and co-occurrence rules
+are directed only when the chosen \code{weight} is asymmetric. Confidence,
+conviction and Laplace accuracy are asymmetric; lift, support, kappa,
+jaccard, cosine, phi and leverage are symmetric, so a lift-weighted
+co-occurrence network is undirected. Pass \code{TRUE}/\code{FALSE} to override.}
+
+\item{level}{\code{"item"} (default) collapses rules into item-to-item
+edges: compact, and what centrality or community analysis wants.
+\code{"rule"} gives one node per rule, with antecedent items pointing into
+it and consequent items out of it -- the standard association-rule
+graph. It keeps the conjunction that \code{"item"} loses: under \code{"item"},
+\verb{\{a,b\} => c} is indistinguishable from the two rules \verb{a => c} and
+\verb{b => c}.}
+
+\item{size_by}{For \code{level = "rule"}, the measure driving rule-node
+size. Default \code{"support"}.}
+
+\item{palette}{For \code{level = "rule"}, the node colour ramp:
+\code{"sequential"} (default), \code{"diverging"} (centred on independence when
+the weight is lift-like), \code{"greys"}, or a vector of colours.}
+
+\item{layout}{For \code{level = "rule"}, the layout. \code{"spring"} (default)
+or \code{"gephi_fr"} are the force layouts that suit this graph shape.
+\code{"ring"} is also available: it places items on an outer circle with
+each rule at the centroid of the items it links.}
+
+\item{label_rules}{For \code{level = "rule"}, what to write on the rule
+nodes. \code{FALSE} (default) leaves them bare, the association-rule
+convention: the node's meaning is its size, colour and position.
+\code{"id"} (or \code{TRUE}) numbers them \code{R1}, \code{R2}, ... so they can be looked
+up against \code{\link[=rules]{rules()}}. \code{"weight"} or \code{"size"} print the value driving
+that channel, \code{"both"} prints both, and \code{"rule"} prints the rule
+itself. A character vector, one per rule, sets the labels directly.}
+
+\item{node_size_range}{For \code{level = "rule"}, the smallest and largest
+rule-node size. Default \code{c(4, 15)}.}
+
+\item{edge_width}{For \code{level = "rule"}, edge thickness. A single value
+draws every edge the same width. Default \code{0.5}, i.e. thin.}
+
+\item{edge_alpha}{For \code{level = "rule"}, edge opacity. Default \code{1};
+cograph's own default of \code{0.8} leaves edges looking hazy.}
 }
 \value{
 An object of class \code{c("dynarules_net", "cograph_network")} with

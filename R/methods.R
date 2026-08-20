@@ -55,35 +55,52 @@ summary.dynarules <- function(object, ...) {
 #'   against confidence coloured by `measure`; `"two-key"` colours the
 #'   same scatter by rule order instead; `"matrix"` tiles antecedent
 #'   against consequent; `"grouped"` collapses antecedents to their lead
-#'   item; `"graph"` draws the item network on a circle; `"paracoord"`
-#'   draws each rule as a path across item positions.
+#'   item; `"graph"` hands the rule network to [cograph::splot()];
+#'   `"paracoord"` draws each rule as a path across item positions.
 #' @param measure Measure to colour by; any name from [list_measures()].
 #'   Default `"lift"`. Ignored by `"two-key"`.
 #' @param top Integer or NULL. Plot only the top N rules by lift.
-#' @param ... Ignored.
-#' @return The `ggplot` object, invisibly.
+#' @param level For `type = "graph"`: `"item"` (default) draws the
+#'   item-to-item network, `"rule"` draws one node per rule between the
+#'   items it links -- the standard association-rule graph.
+#' @param key For `type = "graph", level = "rule"`: draw the size and
+#'   colour key. Default `TRUE`.
+#' @param ... For `type = "graph"`, passed on to [cograph::splot()] (layout,
+#'   node and edge styling); ignored otherwise.
+#' @return For `type = "graph"`, the plotted network object, invisibly --
+#'   cograph draws with base graphics. For every other type, the `ggplot`
+#'   object, invisibly.
 #' @examples
 #' fit <- dynarules(list(c("a", "b", "c"), c("a", "b"), c("a", "c")),
 #'                  min_support = 0.3, min_confidence = 0.3)
 #' plot(fit)
-#' plot(fit, type = "graph")
 #' plot(fit, type = "matrix", measure = "confidence")
-#' @seealso [measures()], [rules()]
+#' if (requireNamespace("cograph", quietly = TRUE)) {
+#'   plot(fit, type = "graph")
+#' }
+#' @seealso [measures()], [rules()], [as_network()]
 #' @export
 plot.dynarules <- function(x, type = c("scatter", "two-key", "matrix",
                                        "grouped", "graph", "paracoord"),
-                           measure = "lift", top = NULL, ...) {
+                           measure = "lift", top = NULL,
+                           level = c("item", "rule"), key = TRUE, ...) {
   stopifnot(inherits(x, "dynarules"))
   type <- match.arg(type)
+  level <- match.arg(level)
   if (!measure %in% names(.DR_MEASURES)) {
     stop("Unknown measure: ", measure, ". See list_measures().",
          call. = FALSE)
   }
-  r <- .dr_plot_data(x, measure, top)
-  if (nrow(r) == 0L) {
+  if (nrow(x$rules) == 0L) {
     message("No rules to plot.")
     return(invisible(NULL))
   }
+  if (type == "graph") {
+    return(invisible(.dr_plot_graph(x, measure, top, level = level,
+                                    key = key, ...)))
+  }
+
+  r <- .dr_plot_data(x, measure, top)
   sep <- .dr_sep(x)
   title <- sprintf("%s rules (%d)",
                    if (x$type == "sequential") "Sequential" else
@@ -93,7 +110,6 @@ plot.dynarules <- function(x, type = c("scatter", "two-key", "matrix",
     "two-key" = .dr_plot_twokey(r, sep, title),
     matrix    = .dr_plot_matrix(r, measure, title),
     grouped   = .dr_plot_grouped(r, sep, measure, title),
-    graph     = .dr_plot_graph(r, sep, measure, title),
     paracoord = .dr_plot_paracoord(r, sep, measure, title)
   )
   print(p)

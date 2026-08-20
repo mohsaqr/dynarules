@@ -9,6 +9,8 @@
   type = c("scatter", "two-key", "matrix", "grouped", "graph", "paracoord"),
   measure = "lift",
   top = NULL,
+  level = c("item", "rule"),
+  key = TRUE,
   ...
 )
 }
@@ -19,18 +21,28 @@
 against confidence coloured by \code{measure}; \code{"two-key"} colours the
 same scatter by rule order instead; \code{"matrix"} tiles antecedent
 against consequent; \code{"grouped"} collapses antecedents to their lead
-item; \code{"graph"} draws the item network on a circle; \code{"paracoord"}
-draws each rule as a path across item positions.}
+item; \code{"graph"} hands the rule network to \code{\link[cograph:splot]{cograph::splot()}};
+\code{"paracoord"} draws each rule as a path across item positions.}
 
 \item{measure}{Measure to colour by; any name from \code{\link[=list_measures]{list_measures()}}.
 Default \code{"lift"}. Ignored by \code{"two-key"}.}
 
 \item{top}{Integer or NULL. Plot only the top N rules by lift.}
 
-\item{...}{Ignored.}
+\item{level}{For \code{type = "graph"}: \code{"item"} (default) draws the
+item-to-item network, \code{"rule"} draws one node per rule between the
+items it links -- the standard association-rule graph.}
+
+\item{key}{For \verb{type = "graph", level = "rule"}: draw the size and
+colour key. Default \code{TRUE}.}
+
+\item{...}{For \code{type = "graph"}, passed on to \code{\link[cograph:splot]{cograph::splot()}} (layout,
+node and edge styling); ignored otherwise.}
 }
 \value{
-The \code{ggplot} object, invisibly.
+For \code{type = "graph"}, the plotted network object, invisibly --
+cograph draws with base graphics. For every other type, the \code{ggplot}
+object, invisibly.
 }
 \description{
 Six standard views of a rule set. \code{"scatter"} and \code{"two-key"} show the
@@ -41,9 +53,11 @@ with which; \code{"graph"} and \code{"paracoord"} show the item-level structure.
 fit <- dynarules(list(c("a", "b", "c"), c("a", "b"), c("a", "c")),
                  min_support = 0.3, min_confidence = 0.3)
 plot(fit)
-plot(fit, type = "graph")
 plot(fit, type = "matrix", measure = "confidence")
+if (requireNamespace("cograph", quietly = TRUE)) {
+  plot(fit, type = "graph")
+}
 }
 \seealso{
-\code{\link[=measures]{measures()}}, \code{\link[=rules]{rules()}}
+\code{\link[=measures]{measures()}}, \code{\link[=rules]{rules()}}, \code{\link[=as_network]{as_network()}}
 }
