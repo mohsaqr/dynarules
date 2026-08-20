@@ -1,0 +1,26 @@
+# Session artifacts — local only, never committed
+HANDOFF.md
+LEARNINGS.md
+CHANGES.md
+CLAUDE.md
+AGENTS.md
+AGENT-NOTE-*.md
+cran-comments.md
+README.html
+local_testing_and_equivalence/
+codex_docs/
+audit
+audit.zip
+
+# Build / scratch
+tmp/
+*.tar.gz
+*.Rcheck/
+.Rproj.user/
+*.Rproj
+.Rhistory
+.RData
+.Rapp.history
+
+# OS
+.DS_Store

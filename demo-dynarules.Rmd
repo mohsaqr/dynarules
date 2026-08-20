@@ -1,0 +1,91 @@
+---
+title: "dynarules 0.1.0 — demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 8, fig.height = 5)
+devtools::load_all("/Users/mohammedsaqr/Documents/Github/dynarules",
+                   quiet = TRUE)
+set.seed(2026)
+```
+
+## Which actions co-occur, and which follow one another?
+
+A synthetic event log: 60 students, each producing a coded session. Half
+follow a plan-first strategy (plan precedes discuss precedes reflect,
+with noise); half act haphazardly.
+
+```{r data}
+make_session <- function(strategic) {
+  noise <- sample(c("search", "read", "note"), 3, replace = TRUE)
+  core <- if (strategic) c("plan", "discuss", "reflect")
+          else sample(c("plan", "discuss", "reflect"))
+  idx <- sort(sample(6, 3))
+  out <- character(6)
+  out[idx] <- core
+  out[-idx] <- noise
+  out
+}
+log <- data.frame(
+  student = rep(sprintf("s%02d", 1:60), each = 6),
+  code = unlist(lapply(1:60, function(i) make_session(i <= 30))),
+  stringsAsFactors = FALSE
+)
+head(log, 8)
+```
+
+## Transactions: the unit of analysis is explicit
+
+```{r transactions}
+tr <- transactions(log, actor = "student", action = "code")
+tr
+summary(tr)
+```
+
+## Co-occurrence rules
+
+```{r cooccurrence}
+fit_co <- dynarules(tr, type = "cooccurrence",
+                    min_support = 0.2, min_confidence = 0.5, min_lift = 0)
+fit_co
+plot(fit_co)
+```
+
+## Sequential rules: order as evidence
+
+```{r sequential}
+fit_seq <- dynarules(tr, type = "sequential",
+                     min_support = 0.3, min_confidence = 0.3,
+                     min_lift = 0, max_length = 3)
+fit_seq
+rules(fit_seq, min_lift = 1, top = 8)
+plot(fit_seq)
+```
+
+## Is the order real? Permutation test (order-shuffling null)
+
+The null preserves exactly which actions co-occur and destroys only their
+order, so surviving rules are informative beyond co-occurrence.
+
+```{r permutation}
+pt <- permute_rules(fit_seq, iter = 200, seed = 1)
+pt
+plot(pt)
+```
+
+## Are the rules stable? Bootstrap
+
+```{r bootstrap}
+bs <- bootstrap_rules(fit_seq, iter = 100, seed = 1)
+bs
+plot(bs)
+```
+
+## Rules as a network
+
+```{r network}
+net <- as_network(fit_seq, weight = "lift")
+net
+round(net$weights, 2)
+```

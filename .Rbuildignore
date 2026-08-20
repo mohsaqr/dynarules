@@ -1,0 +1,10 @@
+^local_testing_and_equivalence$
+^tmp$
+^demo-dynarules\.Rmd$
+^CLAUDE\.md$
+^HANDOFF\.md$
+^LEARNINGS\.md$
+^CHANGES\.md$
+^\.claude$
+^.*\.Rproj$
+^\.Rproj\.user$
