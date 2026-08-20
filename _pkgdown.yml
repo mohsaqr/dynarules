@@ -1,0 +1,64 @@
+url: https://mohsaqr.github.io/dynarules/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Transactions
+    desc: Deciding what counts as one transaction, and preparing the items.
+    contents:
+      - transactions
+      - read_transactions
+      - discretize
+      - item_frequency
+      - cross_table
+      - affinity
+      - support_of
+      - sample_transactions
+      - random_transactions
+      - add_complement
+      - aggregate_items
+
+  - title: Mining
+    desc: Finding the rules.
+    contents:
+      - dynarules
+      - rules
+      - itemsets
+      - rule_induction
+
+  - title: Interest measures
+    desc: The fifty ways to ask whether a rule is interesting.
+    contents:
+      - measures
+      - list_measures
+
+  - title: Which rules to keep
+    contents:
+      - is_redundant
+      - is_significant
+      - is_maximal
+
+  - title: Inference
+    desc: Rules are estimates; these say how much to trust them.
+    contents:
+      - bootstrap_rules
+      - permute_rules
+
+  - title: Classification
+    contents:
+      - cba
+      - predict.dynarules_cba
+
+  - title: Networks and plots
+    contents:
+      - as_network
+      - rule_key
+
+  - title: Methods
+    desc: Print, summary, plot and coercion methods for the result classes.
+    contents:
+      - starts_with("print.")
+      - starts_with("summary.")
+      - starts_with("plot.")
+      - starts_with("as.data.frame.")

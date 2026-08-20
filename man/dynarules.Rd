@@ -20,7 +20,10 @@ dynarules(
   unit = c("session", "actor", "window"),
   window = NULL,
   step = NULL,
-  weights = NULL
+  weights = NULL,
+  gap = NULL,
+  min_gap = NULL,
+  window_size = NULL
 )
 }
 \arguments{
@@ -54,6 +57,18 @@ forwarded to \code{\link[=transactions]{transactions()}} when \code{x} is raw da
 transaction. Support becomes weighted support: the share of total
 weight rather than the share of transactions. \code{NULL} (default)
 weights every transaction equally.}
+
+\item{gap}{Maximum number of events allowed between consecutive items
+of a sequential pattern. \code{NULL} (default) places no limit, i.e.
+ordinary non-contiguous containment; \code{gap = 1} requires the items to
+be adjacent. Sequential mining only.}
+
+\item{min_gap}{Minimum number of events between consecutive items.
+Sequential mining only.}
+
+\item{window_size}{Maximum span, in events, from the first item of a
+pattern to its last. Sequential mining only. (Distinct from
+\code{window}, which cuts the transactions themselves.)}
 }
 \value{
 An object of class \code{"dynarules"}:

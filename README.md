@@ -115,6 +115,42 @@ plot(fit, type = "paracoord")
 
 Any of the fifty measures can drive the colour: `plot(fit, measure = "kappa")`.
 
+## Order constraints for sequential rules
+
+```r
+dynarules(tr, type = "sequential", gap = 1)        # items must be adjacent
+dynarules(tr, type = "sequential", min_gap = 2)    # at least 2 events apart
+dynarules(tr, type = "sequential", window_size = 5)  # whole pattern within 5
+```
+
+Gaps are counted in events, not clock time. Unconstrained containment uses
+a greedy first-match scan, which is exact; under a maximum gap it is not,
+so the constrained path tracks every reachable position instead. Verified
+against a brute-force enumeration of all embeddings.
+
+## Re-deriving rules without re-mining
+
+Mining is the expensive half. Exploring thresholds should not repeat it:
+
+```r
+fit <- dynarules(tr, min_support = 0.05, min_confidence = 0.8)
+rule_induction(fit, min_confidence = 0.3)              # cheap
+rule_induction(fit, appearance = list(rhs = "dropout"))
+```
+
+## Rules as a classifier
+
+```r
+model <- cba(tr, class = c("pass", "fail"))
+model                       # the ordered decision list
+predict(model, newdata)     # first matching rule wins, else the default
+predict(model, newdata, type = "rule")   # which rule fired
+```
+
+CBA M1 (Liu, Hsu & Ma 1998): rules sorted by precedence, then reduced to a
+decision list keeping only rules that classify something not already
+covered.
+
 ## Rules are estimates — treat them like it
 
 ```r
@@ -146,9 +182,12 @@ remotes::install_github("mohsaqr/dynarules")
 measures, condensed itemset targets, redundancy and significance
 predicates are pinned to `arules` numerically by an equivalence suite,
 while the transaction grammar, sequential mining and inference verbs have
-no `arules` counterpart. Two definitional differences are deliberate:
-`dynarules` generates multi-item consequents (`arules::apriori` emits
-single-item ones only), and it never produces empty-antecedent rules.
+no `arules` counterpart. Three definitional differences are deliberate: `dynarules` generates
+multi-item consequents (`arules::apriori` emits single-item ones only); it
+never produces empty-antecedent rules; and `window_size` does not
+correspond to `arulesSequences`' `maxwin`, so no window parity is claimed.
+Unconstrained sequential mining and `gap = 1` **do** match
+`cspade()` exactly once sequence-vs-transaction counting is aligned.
 
 Part of the Dynalytics R family alongside
 [Nestimate](https://github.com/mohsaqr/Nestimate) (network estimation)

@@ -30,6 +30,15 @@
 #'   transaction. Support becomes weighted support: the share of total
 #'   weight rather than the share of transactions. `NULL` (default)
 #'   weights every transaction equally.
+#' @param gap Maximum number of events allowed between consecutive items
+#'   of a sequential pattern. `NULL` (default) places no limit, i.e.
+#'   ordinary non-contiguous containment; `gap = 1` requires the items to
+#'   be adjacent. Sequential mining only.
+#' @param min_gap Minimum number of events between consecutive items.
+#'   Sequential mining only.
+#' @param window_size Maximum span, in events, from the first item of a
+#'   pattern to its last. Sequential mining only. (Distinct from
+#'   `window`, which cuts the transactions themselves.)
 #' @param min_length Integer. Minimum number of items in a rule
 #'   (antecedent plus consequent). Default `2`.
 #' @param appearance Optional list restricting where items may occur:
@@ -91,7 +100,10 @@ dynarules <- function(x,
                       unit = c("session", "actor", "window"),
                       window = NULL,
                       step = NULL,
-                      weights = NULL) {
+                      weights = NULL,
+                      gap = NULL,
+                      min_gap = NULL,
+                      window_size = NULL) {
   type <- match.arg(type)
   stopifnot(
     is.numeric(min_support), length(min_support) == 1L,
@@ -106,6 +118,12 @@ dynarules <- function(x,
   max_length <- as.integer(max_length)
   min_length <- as.integer(min_length)
   appearance <- .dr_check_appearance(appearance)
+  .dr_check_gap(gap, min_gap, window_size)
+  if (type == "cooccurrence" &&
+      !all(vapply(list(gap, min_gap, window_size), is.null, logical(1)))) {
+    stop("`gap`, `min_gap` and `window_size` constrain the ORDER of events, ",
+         "so they only apply to type = \"sequential\".", call. = FALSE)
+  }
 
   tr <- if (inherits(x, "dyna_transactions")) x else {
     transactions(x, actor = actor, action = action, time = time,
@@ -120,7 +138,8 @@ dynarules <- function(x,
 
   params <- list(min_support = min_support, min_confidence = min_confidence,
                  min_lift = min_lift, min_length = min_length,
-                 max_length = max_length, appearance = appearance)
+                 max_length = max_length, appearance = appearance,
+                 gap = gap, min_gap = min_gap, window_size = window_size)
 
   mined <- if (type == "cooccurrence") {
     .mine_cooccurrence(tr, params)
@@ -156,6 +175,21 @@ dynarules <- function(x,
   }
   stopifnot(all(vapply(appearance, is.character, logical(1))))
   list(lhs = appearance$lhs, rhs = appearance$rhs, none = appearance$none)
+}
+
+#' @noRd
+.dr_check_gap <- function(gap, min_gap, window_size) {
+  chk <- function(v, nm) {
+    if (is.null(v)) return(invisible(NULL))
+    if (!is.numeric(v) || length(v) != 1L || v < 1) {
+      stop("`", nm, "` must be a single number >= 1.", call. = FALSE)
+    }
+  }
+  chk(gap, "gap"); chk(min_gap, "min_gap"); chk(window_size, "window_size")
+  if (!is.null(gap) && !is.null(min_gap) && min_gap > gap) {
+    stop("`min_gap` cannot exceed `gap`.", call. = FALSE)
+  }
+  invisible(NULL)
 }
 
 #' @noRd
@@ -322,21 +356,62 @@ dynarules <- function(x,
 # ---- Sequential miner (generalized sequential patterns) ----
 
 # Does ordered vector `s` contain `p` as a (not necessarily contiguous)
-# subsequence? Progressive first-match scan expressed as a fold.
+# subsequence, subject to the optional gap and window constraints?
+#
+# Unconstrained, a greedy first-match scan is exact: taking the earliest
+# possible position for each item never rules out a later match. Under a
+# maximum gap it is NOT exact -- committing to the first occurrence can
+# strand the rest of the pattern past the gap limit when a later
+# occurrence would have matched. The constrained path therefore carries
+# the full set of reachable positions at each step rather than a single
+# one.
+#
+# Gaps are counted in EVENTS, not clock time: transactions store the
+# ordered actions, not their timestamps.
 #' @noRd
-.dr_contains <- function(s, p) {
-  pos <- Reduce(function(at, item) {
-    if (is.na(at) || at >= length(s)) return(NA_integer_)
-    hits <- which(s[(at + 1L):length(s)] == item)
-    if (length(hits) == 0L) NA_integer_ else at + hits[1L]
-  }, p, init = 0L)
-  !is.na(pos)
+.dr_contains <- function(s, p, gap = NULL, min_gap = NULL, window = NULL) {
+  if (is.null(gap) && is.null(min_gap) && is.null(window)) {
+    pos <- Reduce(function(at, item) {
+      if (is.na(at) || at >= length(s)) return(NA_integer_)
+      hits <- which(s[(at + 1L):length(s)] == item)
+      if (length(hits) == 0L) NA_integer_ else at + hits[1L]
+    }, p, init = 0L)
+    return(!is.na(pos))
+  }
+  starts <- which(s == p[1L])
+  if (length(starts) == 0L) return(FALSE)
+  if (length(p) == 1L) return(TRUE)
+  any(vapply(starts, function(st) {
+    length(.dr_reach(s, p, st, gap, min_gap, window)) > 0L
+  }, logical(1)))
+}
+
+# Positions at which the pattern can END, given it started at `start`.
+# Empty means no admissible embedding from that start.
+#' @noRd
+.dr_reach <- function(s, p, start, gap, min_gap, window) {
+  n <- length(s)
+  limit <- if (is.null(window)) n else min(n, start + window)
+  lo_gap <- if (is.null(min_gap)) 1L else max(1L, as.integer(min_gap))
+  hi_gap <- if (is.null(gap)) n else as.integer(gap)
+  Reduce(function(prev, item) {
+    if (length(prev) == 0L) return(integer(0))
+    cand <- which(s == item)
+    cand <- cand[cand <= limit & cand > min(prev)]
+    if (length(cand) == 0L) return(integer(0))
+    cand[vapply(cand, function(cc) {
+      d <- cc - prev
+      any(d >= lo_gap & d <= hi_gap)
+    }, logical(1))]
+  }, p[-1L], init = start)
 }
 
 
 #' @noRd
-.dr_count_pattern <- function(seqs, p, w) {
-  sum(w[vapply(seqs, .dr_contains, logical(1), p = p)])
+.dr_count_pattern <- function(seqs, p, w, gap = NULL, min_gap = NULL,
+                              window = NULL) {
+  sum(w[vapply(seqs, .dr_contains, logical(1), p = p, gap = gap,
+               min_gap = min_gap, window = window)])
 }
 
 
@@ -363,13 +438,17 @@ dynarules <- function(x,
          support = item_counts[[i]] / n_trans)
   })
 
+  gap <- params$gap
+  min_gap <- params$min_gap
+  window_size <- params$window_size
+
   # Level 2: all ordered pairs, including repeats (A -> A).
   if (params$max_length >= 2L) {
     grid <- expand.grid(a = items, b = items, stringsAsFactors = FALSE)
     freq2 <- Filter(Negate(is.null),
                     lapply(seq_len(nrow(grid)), function(r) {
       p <- c(grid$a[r], grid$b[r])
-      cnt <- .dr_count_pattern(seqs, p, w)
+      cnt <- .dr_count_pattern(seqs, p, w, gap, min_gap, window_size)
       if (cnt < min_count) return(NULL)
       list(items = p, count = cnt, support = cnt / n_trans)
     }))
@@ -383,11 +462,17 @@ dynarules <- function(x,
          length(levels_list[[k - 1L]]) >= 1L) {
     prev_items <- lapply(levels_list[[k - 1L]], `[[`, "items")
     prev_keys <- vapply(prev_items, paste, character(1), collapse = .DR_SEP)
-    candidates <- .dr_join_seqs(prev_items, prev_keys, k)
+    # A maximum gap breaks the usual subsequence prune: dropping an item
+    # from the MIDDLE of a pattern widens the gap between its neighbours,
+    # so a frequent pattern can have an infrequent drop-one subsequence.
+    # Dropping the first or last item never widens an interior gap, so the
+    # GSP join itself stays valid -- only the prune has to go.
+    candidates <- .dr_join_seqs(prev_items, prev_keys, k,
+                                prune = is.null(gap))
     if (length(candidates) == 0L) break
 
     freq_k <- Filter(Negate(is.null), lapply(candidates, function(cand) {
-      cnt <- .dr_count_pattern(seqs, cand, w)
+      cnt <- .dr_count_pattern(seqs, cand, w, gap, min_gap, window_size)
       if (cnt < min_count) return(NULL)
       list(items = cand, count = cnt, support = cnt / n_trans)
     }))
@@ -406,7 +491,7 @@ dynarules <- function(x,
 # a[-1] == b[-(k-1)]. Prune requires every drop-one-position subsequence
 # to be frequent.
 #' @noRd
-.dr_join_seqs <- function(prev_items, prev_keys, k) {
+.dr_join_seqs <- function(prev_items, prev_keys, k, prune = TRUE) {
   n <- length(prev_items)
   grid <- expand.grid(i = seq_len(n), j = seq_len(n))
   cands <- Filter(Negate(is.null), lapply(seq_len(nrow(grid)), function(r) {
@@ -417,6 +502,7 @@ dynarules <- function(x,
   }))
   cands <- cands[!duplicated(vapply(cands, paste, character(1),
                                     collapse = .DR_SEP))]
+  if (!prune) return(cands)
   Filter(function(cand) {
     subs <- lapply(seq_len(k), function(drop) cand[-drop])
     all(vapply(subs, paste, character(1), collapse = .DR_SEP)

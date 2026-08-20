@@ -14,6 +14,7 @@ bootstrap stability, and permutation significance testing.
 Useful links:
 \itemize{
   \item \url{https://github.com/mohsaqr/dynarules}
+  \item \url{https://mohsaqr.github.io/dynarules/}
   \item Report bugs at \url{https://github.com/mohsaqr/dynarules/issues}
 }
 
