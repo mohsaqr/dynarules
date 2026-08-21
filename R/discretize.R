@@ -2,8 +2,14 @@
 # input, so a continuous measure has to be cut before it can be an item;
 # how it is cut is a modelling choice, which is why the method is an
 # argument rather than a default buried in the pipeline.
+#
+# The verb is `discretize_items()`, not `discretize()`: that bare name is
+# already taken twice over -- by arules, and by the sibling package tsn,
+# whose version discretizes a time series into states from a long
+# data.frame and is a different operation with an incompatible signature.
+# The longer name also says what this one is for: making ITEMS.
 
-#' Discretize a Numeric Variable Into Items
+#' Discretize a Numeric Variable Into Mining Items
 #'
 #' @param x A numeric vector, or a `data.frame` whose numeric columns are
 #'   all to be discretized.
@@ -29,12 +35,12 @@
 #' @return A factor of the same length as `x`, or for a `data.frame` a
 #'   `data.frame` with its numeric columns replaced by factors.
 #' @examples
-#' discretize(c(1, 3, 5, 7, 9, 11), breaks = 3)
-#' discretize(c(1, 3, 5, 7, 9, 11), method = "interval", breaks = 2)
-#' discretize(c(1, 2, 3, 10, 11, 12), method = "cluster", breaks = 2)
+#' discretize_items(c(1, 3, 5, 7, 9, 11), breaks = 3)
+#' discretize_items(c(1, 3, 5, 7, 9, 11), method = "interval", breaks = 2)
+#' discretize_items(c(1, 2, 3, 10, 11, 12), method = "cluster", breaks = 2)
 #' @seealso [transactions()]
 #' @export
-discretize <- function(x, method = c("frequency", "interval", "cluster",
+discretize_items <- function(x, method = c("frequency", "interval", "cluster",
                                      "fixed"),
                        breaks = 3, labels = NULL, include_lowest = TRUE,
                        right = FALSE, ordered = FALSE, infinity = FALSE,
@@ -107,6 +113,6 @@ discretize <- function(x, method = c("frequency", "interval", "cluster",
     warning("No numeric columns to discretize.", call. = FALSE)
     return(df)
   }
-  df[numeric_cols] <- lapply(df[numeric_cols], discretize, ...)
+  df[numeric_cols] <- lapply(df[numeric_cols], discretize_items, ...)
   df
 }

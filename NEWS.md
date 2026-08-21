@@ -1,5 +1,14 @@
 # dynarules 0.5.0
 
+## Naming
+
+* `discretize()` is now `discretize_items()`. The bare name collided with
+  both `arules::discretize()` and `tsn::discretize()` -- and tsn's is a
+  different operation on a different input shape (long time-series data,
+  fifteen methods, states rather than items), so masking it would have
+  been actively confusing. The new name also says what the verb is for.
+  dynarules now collides with no name in `cograph`, `Nestimate` or `tsn`.
+
 ## Sequential constraints
 
 * `dynarules()` gains `gap`, `min_gap` and `window_size` for sequential
@@ -82,15 +91,15 @@
   `support_of()`, `sample_transactions()`, `random_transactions()`,
   `add_complement()`, `aggregate_items()`, `read_transactions()`.
 
-* `discretize()` for numeric vectors and data.frames, with frequency,
-  interval, cluster and fixed methods.
+* `discretize_items()` for numeric vectors and data.frames, with
+  frequency, interval, cluster and fixed methods.
 
 * Weighted support: `transactions(weights =)` and `dynarules(weights =)`.
   Support becomes the share of total weight rather than of transactions.
 
 * Verified against arules: weighted support matches `weclat()`, all
-  transaction verbs match their arules counterparts, and `discretize()`
-  matches on all four methods.
+  transaction verbs match their arules counterparts, and
+  `discretize_items()` matches on all four methods.
 
 
 # dynarules 0.2.0

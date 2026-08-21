@@ -36,8 +36,8 @@ accepted; the event-log grammar can be passed straight to `dynarules()`.
 ## Preparing transactions
 
 ```r
-discretize(scores, method = "cluster", breaks = 3)   # numeric -> items
-discretize(df, breaks = 3)                           # every numeric column
+discretize_items(scores, method = "cluster", breaks = 3)   # numeric -> items
+discretize_items(df, breaks = 3)                           # every numeric column
 
 read_transactions("baskets.csv")                     # one line per basket
 read_transactions("log.csv", format = "single")      # one line per item

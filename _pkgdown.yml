@@ -9,7 +9,7 @@ reference:
     contents:
       - transactions
       - read_transactions
-      - discretize
+      - discretize_items
       - item_frequency
       - cross_table
       - affinity
