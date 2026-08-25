@@ -1,0 +1,142 @@
+---
+title: "dynarules 0.2.0 — visualisation review"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 8, fig.height = 5, dpi = 110)
+suppressMessages(devtools::load_all("..", quiet = TRUE))
+set.seed(21)
+```
+
+```{r data}
+# A synthetic learning-event log: 40 students, 5 lessons, 6 actions.
+acts <- c("read", "video", "quiz", "forum", "submit", "review")
+ev <- do.call(rbind, lapply(1:40, function(s) {
+  do.call(rbind, lapply(1:5, function(les) {
+    k <- sample(3:6, 1)
+    data.frame(student = paste0("s", s), lesson = paste0("L", les),
+               when = seq_len(k),
+               what = sample(acts, k, replace = TRUE,
+                             prob = c(.28,.2,.18,.14,.12,.08)),
+               stringsAsFactors = FALSE)
+  }))
+}))
+fit <- dynarules(ev, actor = "student", action = "what", time = "when",
+                 session = "lesson", unit = "session",
+                 min_support = 0.05, min_confidence = 0.2, min_lift = 0)
+sfit <- dynarules(ev, type = "sequential", actor = "student", action = "what",
+                  time = "when", session = "lesson", unit = "session",
+                  min_support = 0.08, min_confidence = 0.25, min_lift = 0)
+```
+
+`r nrow(ev)` events → **`r fit$n_transactions` transactions**,
+**`r nrow(fit$rules)` co-occurrence rules**, **`r nrow(sfit$rules)` sequential rules**.
+
+> Network views are drawn by **cograph** (`splot()`), not by dynarules.
+> The other five views are ggplot2.
+>
+> Whether a network is directed depends on the weight: `confidence`,
+> `conviction` and `laplace` are asymmetric and give directed graphs;
+> `lift`, `support`, `kappa`, `jaccard`, `cosine`, `phi` and `leverage`
+> are symmetric and give undirected ones. Sequential rules are always
+> directed.
+
+# Co-occurrence rules
+
+## 1. scatter — the default
+
+Support against confidence, coloured by lift. Diverging palette centred on
+lift = 1, so blue beats independence and red falls short of it.
+
+```{r}
+plot(fit, type = "scatter", top = 40)
+```
+
+## 2. two-key
+
+The same scatter, coloured by rule order instead. Shows how the longer
+rules concentrate at low support.
+
+```{r}
+plot(fit, type = "two-key", top = 40)
+```
+
+## 3. matrix
+
+Antecedent against consequent, tiled by the chosen measure.
+
+```{r}
+plot(fit, type = "matrix", measure = "lift", top = 30)
+```
+
+## 4. grouped
+
+Antecedents collapsed to their lead item; point size is support.
+(arulesViz clusters antecedents here — this groups them deterministically
+instead, so no clustering dependency is needed.)
+
+```{r}
+plot(fit, type = "grouped", top = 40)
+```
+
+## 5. graph
+
+Handed to `cograph::splot()`. `as_network()` already emits a
+`cograph_network`, so dynarules does not draw networks itself — it passes
+the object to the house renderer. Anything `splot()` accepts (layout, node
+and edge styling) passes straight through the `...`.
+
+```{r fig.height=6.5}
+plot(fit, type = "graph", top = 25)
+```
+
+**Directedness is derived, not assumed.** The default weight is lift, which
+is *symmetric* for co-occurrence rules — lift(a→b) equals lift(b→a) — so the
+network above is drawn undirected. Weighting by confidence, which is
+asymmetric, gives a genuinely directed network:
+
+```{r fig.height=6.5}
+plot(fit, type = "graph", measure = "confidence", top = 25)
+```
+
+## 6. paracoord
+
+Each rule is a path across item positions; the last position is the
+consequent.
+
+```{r}
+plot(fit, type = "paracoord", top = 25)
+```
+
+# Sequential rules
+
+The same views over order-aware rules. Note the axis labels switch to the
+`->` separator and the title reports "Sequential".
+
+```{r}
+plot(sfit, type = "scatter", top = 30)
+```
+
+```{r fig.height=6.5}
+plot(sfit, type = "graph", top = 20)
+```
+
+```{r}
+plot(sfit, type = "paracoord", top = 20)
+```
+
+# Colouring by any of the 50 measures
+
+```{r}
+plot(fit, type = "scatter", measure = "kappa", top = 40)
+```
+
+```{r}
+plot(fit, type = "matrix", measure = "jaccard", top = 30)
+```

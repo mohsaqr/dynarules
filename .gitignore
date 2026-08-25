@@ -13,7 +13,6 @@ audit
 audit.zip
 
 # Build / scratch
-tmp/
 *.tar.gz
 *.Rcheck/
 .Rproj.user/

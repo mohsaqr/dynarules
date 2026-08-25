@@ -1,0 +1,102 @@
+---
+title: "Rule graph — fixing the hairball"
+output:
+  html_document: { toc: true, toc_float: true, theme: flatly }
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 9, fig.height = 8, dpi = 105)
+suppressMessages(devtools::load_all("..", quiet = TRUE))
+set.seed(21)
+```
+
+```{r data}
+# 6 items (as before) and a 12-item version. With few items every item is a
+# hub, which is what buried them in the middle.
+acts6 <- c("read", "video", "quiz", "forum", "submit", "review")
+acts12 <- c(acts6, "search", "annotate", "bookmark", "chat", "upload", "revise")
+mk <- function(acts, n = 40) do.call(rbind, lapply(seq_len(n), function(s) {
+  do.call(rbind, lapply(1:5, function(les) {
+    k <- sample(3:6, 1)
+    data.frame(student = paste0("s", s), lesson = paste0("L", les),
+               when = seq_len(k),
+               what = sample(acts, k, replace = TRUE),
+               stringsAsFactors = FALSE)
+  }))
+}))
+ev6  <- mk(acts6)
+ev12 <- mk(acts12)
+fit  <- dynarules(ev6, actor="student", action="what", time="when",
+                  session="lesson", unit="session",
+                  min_support=0.05, min_confidence=0.25, min_lift=0)
+fit12 <- dynarules(ev12, actor="student", action="what", time="when",
+                   session="lesson", unit="session",
+                   min_support=0.02, min_confidence=0.2, min_lift=0)
+draw <- function(net, title = NULL) { cograph::splot(net, title = title); rule_key(net) }
+```
+
+# 1. Before / after
+
+## Before — spring layout, sizes c(4, 15)
+
+What you saw: rules oversized and overlapping, items piled in the centre.
+
+```{r}
+net <- as_network(fit, level="rule", top=20, layout="spring",
+                  node_size_range=c(4,15))
+draw(net, "spring, size c(4,15) — the hairball")
+```
+
+## After — ring layout, sizes c(2, 7)
+
+Items on the outer circle, each rule at the centroid of the items it links.
+
+```{r}
+draw(as_network(fit, level="rule", top=20), "ring, size c(2,7)")
+```
+
+# 2. How many rules?
+
+Same data and layout, varying `top`. Density is the other half of the problem.
+
+```{r}
+for (k in c(8, 12, 20, 30)) draw(as_network(fit, level="rule", top=k),
+                                 paste("top =", k))
+```
+
+# 3. Node size range
+
+```{r}
+for (rg in list(c(1.5,4), c(2,7), c(3,10))) {
+  draw(as_network(fit, level="rule", top=15, node_size_range=rg),
+       paste0("node_size_range = c(", rg[1], ", ", rg[2], ")"))
+}
+```
+
+# 4. Layouts, side by side
+
+```{r}
+for (lay in c("ring", "spring", "gephi_fr", "circle")) {
+  draw(as_network(fit, level="rule", top=15, layout=lay),
+       paste("layout =", lay))
+}
+```
+
+# 5. More items (12) — closer to your reference images
+
+With items appearing in fewer rules each, the graph opens up.
+
+```{r}
+for (k in c(15, 25)) draw(as_network(fit12, level="rule", top=k),
+                          paste("12 items, top =", k))
+```
+
+# 6. Colour ramps at the fixed size
+
+```{r}
+for (pal in c("sequential", "diverging", "greys")) {
+  draw(as_network(fit12, level="rule", top=15, palette=pal),
+       paste("palette =", pal))
+}
+```

@@ -1,0 +1,140 @@
+---
+title: "dynarules — rule-level network, options to choose from"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 9, fig.height = 7.5, dpi = 110)
+suppressMessages(devtools::load_all("..", quiet = TRUE))
+set.seed(21)
+```
+
+```{r data}
+acts <- c("read", "video", "quiz", "forum", "submit", "review")
+ev <- do.call(rbind, lapply(1:40, function(s) {
+  do.call(rbind, lapply(1:5, function(les) {
+    k <- sample(3:6, 1)
+    data.frame(student = paste0("s", s), lesson = paste0("L", les),
+               when = seq_len(k),
+               what = sample(acts, k, replace = TRUE,
+                             prob = c(.28,.2,.18,.14,.12,.08)),
+               stringsAsFactors = FALSE)
+  }))
+}))
+fit <- dynarules(ev, actor = "student", action = "what", time = "when",
+                 session = "lesson", unit = "session",
+                 min_support = 0.05, min_confidence = 0.25, min_lift = 0)
+```
+
+All drawn by **`cograph::splot()`** through the `meta$splot` producer contract.
+dynarules sets defaults on the object; every one stays overridable.
+
+# The question: item-level or rule-level?
+
+## A — item-level (what ships today)
+
+Rules collapsed to item→item edges. Compact, and what centrality and
+community detection want. But `{quiz, forum} => read` is indistinguishable
+from two separate rules `quiz => read` and `forum => read`.
+
+```{r}
+plot(fit, type = "graph", top = 20)
+```
+
+## B — rule-level (your screenshots)
+
+One node per rule. Antecedent items point **in**, consequent items point
+**out**. Size = support, colour = lift. Nothing is lost.
+
+```{r}
+plot(fit, type = "graph", level = "rule", top = 20)
+```
+
+# Legend: which key?
+
+## B1 — dynarules key, boxed (matches your second image)
+
+```{r}
+plot(fit, type = "graph", level = "rule", top = 20)
+```
+
+## B2 — cograph's own legend (`legend = TRUE`)
+
+Discrete: group squares for item vs rule. No continuous ranges.
+
+```{r}
+plot(fit, type = "graph", level = "rule", top = 20, key = FALSE,
+     legend = TRUE, legend_position = "bottomleft")
+```
+
+## B3 — no key at all
+
+```{r}
+plot(fit, type = "graph", level = "rule", top = 20, key = FALSE)
+```
+
+# Colour ramp
+
+## C1 — sequential (association-rule convention, your images)
+
+```{r}
+net <- as_network(fit, level = "rule", top = 20, palette = "sequential")
+cograph::splot(net); rule_key(net)
+```
+
+## C2 — diverging, centred on lift = 1 (dynarules house ramp)
+
+Red below independence, blue above. Only meaningful for lift-like measures.
+
+```{r}
+net <- as_network(fit, level = "rule", top = 20, palette = "diverging")
+cograph::splot(net); rule_key(net)
+```
+
+## C3 — greys
+
+```{r}
+net <- as_network(fit, level = "rule", top = 20, palette = "greys")
+cograph::splot(net); rule_key(net)
+```
+
+# Layout
+
+```{r}
+for (lay in c("spring", "gephi_fr", "circle")) {
+  net <- as_network(fit, level = "rule", top = 20, layout = lay)
+  cograph::splot(net, title = paste("layout =", lay)); rule_key(net)
+}
+```
+
+# Encodings are arguments
+
+Size and colour can be any of the 50 measures.
+
+```{r}
+net <- as_network(fit, level = "rule", top = 20, weight = "confidence",
+                  size_by = "count")
+cograph::splot(net, title = "size = count, colour = confidence")
+rule_key(net)
+```
+
+# Rule labels on or off
+
+```{r}
+net <- as_network(fit, level = "rule", top = 15, label_rules = TRUE)
+cograph::splot(net, title = "label_rules = TRUE"); rule_key(net)
+```
+
+# Sequential rules
+
+```{r}
+sfit <- dynarules(ev, type = "sequential", actor = "student", action = "what",
+                  time = "when", session = "lesson", unit = "session",
+                  min_support = 0.08, min_confidence = 0.25, min_lift = 0)
+plot(sfit, type = "graph", level = "rule", top = 18)
+```

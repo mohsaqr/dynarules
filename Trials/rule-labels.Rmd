@@ -1,0 +1,91 @@
+---
+title: "Rule graph — what goes on the rule nodes"
+output:
+  html_document: { toc: true, toc_float: true, theme: flatly }
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 9, fig.height = 8, dpi = 105)
+suppressMessages(devtools::load_all("..", quiet = TRUE))
+set.seed(21)
+```
+
+```{r data}
+acts <- c("read", "video", "quiz", "forum", "submit", "review")
+ev <- do.call(rbind, lapply(1:40, function(s) {
+  do.call(rbind, lapply(1:5, function(les) {
+    k <- sample(3:6, 1)
+    data.frame(student=paste0("s",s), lesson=paste0("L",les), when=seq_len(k),
+               what=sample(acts, k, replace=TRUE), stringsAsFactors=FALSE)
+  }))
+}))
+fit <- dynarules(ev, actor="student", action="what", time="when",
+                 session="lesson", unit="session",
+                 min_support=0.05, min_confidence=0.25, min_lift=0)
+draw <- function(lr, title, top=14) {
+  net <- as_network(fit, level="rule", top=top, label_rules=lr)
+  cograph::splot(net, title=title); rule_key(net)
+}
+```
+
+Only items were labelled because that is the convention in the reference
+plots — the rule circle means something through its **size, colour and
+position**, not its name. The cost is that you cannot tell which circle is
+which rule. `label_rules` now decides.
+
+# FALSE — bare (current default, the convention)
+
+```{r}
+draw(FALSE, 'label_rules = FALSE')
+```
+
+# "id" — R1, R2, … cross-referenced to rules()
+
+Each circle can now be looked up in the table below the plot.
+
+```{r}
+draw("id", 'label_rules = "id"')
+```
+
+```{r echo=FALSE}
+r <- rules(fit, top = 14)
+knitr::kable(cbind(id = paste0("R", seq_len(nrow(r))),
+                   r[, c("antecedent", "consequent", "support",
+                         "confidence", "lift")]),
+             digits = 3, caption = "The 14 rules drawn above")
+```
+
+# "weight" — the colour value on the node
+
+```{r}
+draw("weight", 'label_rules = "weight"  (lift)')
+```
+
+# "size" — the size value on the node
+
+```{r}
+draw("size", 'label_rules = "size"  (support)')
+```
+
+# "both" — size over colour
+
+```{r}
+draw("both", 'label_rules = "both"')
+```
+
+# "rule" — the rule itself
+
+Only readable at very small rule counts.
+
+```{r}
+draw("rule", 'label_rules = "rule"', top = 6)
+```
+
+# Fewer rules, labelled
+
+`"id"` at 8 rules, where the labels have room.
+
+```{r}
+draw("id", 'label_rules = "id", top = 8', top = 8)
+```

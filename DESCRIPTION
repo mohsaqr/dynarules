@@ -1,6 +1,6 @@
 Package: dynarules
 Title: Association and Sequential Rule Mining for Temporal Event Data
-Version: 0.5.0
+Version: 0.5.1
 Authors@R:
     person("Mohammed", "Saqr", email = "ueflaunit@gmail.com",
            role = c("aut", "cre"))
