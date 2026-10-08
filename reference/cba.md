@@ -14,7 +14,7 @@ cba(x, class, min_support = 0.05, min_confidence = 0.5, max_length = 5L, ...)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - class:
@@ -26,13 +26,13 @@ cba(x, class, min_support = 0.05, min_confidence = 0.5, max_length = 5L, ...)
 - min_support, min_confidence, max_length:
 
   Passed to
-  [`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md)
+  [`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md)
   for the rule-mining step.
 
 - ...:
 
   Further arguments for
-  [`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md).
+  [`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md).
 
 ## Value
 
@@ -46,8 +46,8 @@ association rule mining. *KDD-98*, 80–86.
 
 ## See also
 
-[`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md)
+[`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md)
 
 ## Examples
 

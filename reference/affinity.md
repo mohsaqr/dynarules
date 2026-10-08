@@ -14,7 +14,7 @@ affinity(x)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 ## Value
@@ -23,7 +23,7 @@ A tidy `data.frame`: `item1`, `item2`, `affinity`.
 
 ## See also
 
-[`cross_table()`](https://mohsaqr.github.io/dynarules/reference/cross_table.md)
+[`cross_table()`](https://pak.dynasite.org/dynarules/reference/cross_table.md)
 
 ## Examples
 

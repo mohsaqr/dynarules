@@ -11,7 +11,7 @@ with which; "graph" and "paracoord" show the item-level structure.'></head><body
 
     <a class="navbar-brand me-2" href="../index.html">dynarules</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ with which; <code>"graph"</code> and <code>"paracoord"</code> show the item-leve
 against confidence coloured by <code>measure</code>; <code>"two-key"</code> colours the
 same scatter by rule order instead; <code>"matrix"</code> tiles antecedent
 against consequent; <code>"grouped"</code> collapses antecedents to their lead
-item; <code>"graph"</code> hands the rule network to <code><a href="https://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code>;
+item; <code>"graph"</code> hands the rule network to <code>cograph::splot()</code>;
 <code>"paracoord"</code> draws each rule as a path across item positions.</p></dd>
 
 
@@ -95,7 +95,7 @@ colour key. Default <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>For <code>type = "graph"</code>, passed on to <code><a href="https://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code> (layout,
+<dd><p>For <code>type = "graph"</code>, passed on to <code>cograph::splot()</code> (layout,
 node and edge styling); ignored otherwise.</p></dd>
 
 </dl></div>
@@ -121,7 +121,6 @@ object, invisibly.</p>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"cograph"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"graph"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-plt img"><img src="plot.dynarules-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

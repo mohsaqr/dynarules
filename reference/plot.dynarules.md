@@ -31,14 +31,13 @@ plot(
   confidence coloured by `measure`; `"two-key"` colours the same scatter
   by rule order instead; `"matrix"` tiles antecedent against consequent;
   `"grouped"` collapses antecedents to their lead item; `"graph"` hands
-  the rule network to
-  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html);
-  `"paracoord"` draws each rule as a path across item positions.
+  the rule network to `cograph::splot()`; `"paracoord"` draws each rule
+  as a path across item positions.
 
 - measure:
 
   Measure to colour by; any name from
-  [`list_measures()`](https://mohsaqr.github.io/dynarules/reference/list_measures.md).
+  [`list_measures()`](https://pak.dynasite.org/dynarules/reference/list_measures.md).
   Default `"lift"`. Ignored by `"two-key"`.
 
 - top:
@@ -58,9 +57,8 @@ plot(
 
 - ...:
 
-  For `type = "graph"`, passed on to
-  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
-  (layout, node and edge styling); ignored otherwise.
+  For `type = "graph"`, passed on to `cograph::splot()` (layout, node
+  and edge styling); ignored otherwise.
 
 ## Value
 
@@ -70,9 +68,9 @@ invisibly.
 
 ## See also
 
-[`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+[`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
 
 ## Examples
 

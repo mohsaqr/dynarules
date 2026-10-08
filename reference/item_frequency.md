@@ -13,7 +13,7 @@ item_frequency(x, top = NULL)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - top:
@@ -27,8 +27,8 @@ support.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md),
-[`cross_table()`](https://mohsaqr.github.io/dynarules/reference/cross_table.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md),
+[`cross_table()`](https://pak.dynasite.org/dynarules/reference/cross_table.md)
 
 ## Examples
 

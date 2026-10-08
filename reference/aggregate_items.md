@@ -14,7 +14,7 @@ aggregate_items(x, hierarchy)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - hierarchy:
@@ -30,7 +30,7 @@ preserved; runs of the same group collapse to a single event.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 
 ## Examples
 

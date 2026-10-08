@@ -16,7 +16,7 @@ theoretical `range`, whether it compares against more general rules
 
 ## See also
 
-[`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md)
+[`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md)
 
 ## Examples
 

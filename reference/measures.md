@@ -2,7 +2,7 @@
 
 Computes any of the 51 association-rule interest measures for a mined
 rule set. Call
-[`list_measures()`](https://mohsaqr.github.io/dynarules/reference/list_measures.md)
+[`list_measures()`](https://pak.dynasite.org/dynarules/reference/list_measures.md)
 for the catalogue.
 
 ## Usage
@@ -53,8 +53,8 @@ unaffected.
 
 ## See also
 
-[`list_measures()`](https://mohsaqr.github.io/dynarules/reference/list_measures.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md)
+[`list_measures()`](https://pak.dynasite.org/dynarules/reference/list_measures.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md)
 
 ## Examples
 

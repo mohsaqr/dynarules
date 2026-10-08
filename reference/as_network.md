@@ -36,7 +36,7 @@ as_network(
 - weight:
 
   Character. Which rule metric becomes the edge weight: any measure from
-  [`list_measures()`](https://mohsaqr.github.io/dynarules/reference/list_measures.md),
+  [`list_measures()`](https://pak.dynasite.org/dynarules/reference/list_measures.md),
   e.g. `"lift"` (default), `"confidence"`, `"support"`, `"kappa"`.
 
 - aggregate:
@@ -90,7 +90,7 @@ as_network(
   (default) leaves them bare, the association-rule convention: the
   node's meaning is its size, colour and position. `"id"` (or `TRUE`)
   numbers them `R1`, `R2`, ... so they can be looked up against
-  [`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md).
+  [`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md).
   `"weight"` or `"size"` print the value driving that channel, `"both"`
   prints both, and `"rule"` prints the rule itself. A character vector,
   one per rule, sets the labels directly.

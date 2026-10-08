@@ -14,7 +14,7 @@ add_complement(x, items = NULL, prefix = "!")
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - items:
@@ -33,7 +33,7 @@ sequence.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 
 ## Examples
 

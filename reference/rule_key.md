@@ -2,8 +2,7 @@
 
 cograph's legend covers discrete groups, edge colours and a node-size
 scale, but not the two continuous encodings an association-rule graph
-uses. This draws that key onto the current plot after
-[`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
+uses. This draws that key onto the current plot after `cograph::splot()`
 has run.
 
 ## Usage
@@ -21,7 +20,7 @@ rule_key(
 - net:
 
   A rule-level network from
-  [`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+  [`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
   with `level = "rule"`.
 
 - position:
@@ -39,7 +38,7 @@ rule_key(
 
 ## See also
 
-[`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+[`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
 
 ## Examples
 

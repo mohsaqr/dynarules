@@ -5,7 +5,7 @@
 ### Naming
 
 - `discretize()` is now
-  [`discretize_items()`](https://mohsaqr.github.io/dynarules/reference/discretize_items.md).
+  [`discretize_items()`](https://pak.dynasite.org/dynarules/reference/discretize_items.md).
   The bare name collided with both `arules::discretize()` and
   `tsn::discretize()` – and tsn’s is a different operation on a
   different input shape (long time-series data, fifteen methods, states
@@ -15,7 +15,7 @@
 
 ### Sequential constraints
 
-- [`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md)
+- [`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md)
   gains `gap`, `min_gap` and `window_size` for sequential mining: the
   maximum and minimum number of events between consecutive items of a
   pattern, and the maximum span from a pattern’s first item to its last.
@@ -38,7 +38,7 @@
 
 ### Rule induction
 
-- [`rule_induction()`](https://mohsaqr.github.io/dynarules/reference/rule_induction.md)
+- [`rule_induction()`](https://pak.dynasite.org/dynarules/reference/rule_induction.md)
   regenerates rules from patterns already mined, at new confidence,
   lift, length or `appearance` thresholds, without re-running the miner.
   Output is identical to re-mining, for both rule types. `min_support`
@@ -47,7 +47,7 @@
 
 ### Classification
 
-- [`cba()`](https://mohsaqr.github.io/dynarules/reference/cba.md) builds
+- [`cba()`](https://pak.dynasite.org/dynarules/reference/cba.md) builds
   a classifier from class association rules using the CBA M1 algorithm
   (Liu, Hsu & Ma 1998): rules are sorted by precedence and reduced to an
   ordered decision list, keeping a rule only when it correctly
@@ -76,18 +76,17 @@
 ## dynarules 0.4.0
 
 - Networks are rendered by cograph. `plot(type = "graph")` hands the
-  object to
-  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
-  through the `meta$splot` producer contract instead of drawing its own
-  layout. The `grid` dependency is gone.
+  object to `cograph::splot()` through the `meta$splot` producer
+  contract instead of drawing its own layout. The `grid` dependency is
+  gone.
 
-- [`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+- [`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
   gains `level = "rule"`, the standard association-rule graph with one
   node per rule. It keeps the conjunction the item-level collapse loses:
   under `level = "item"`, `{a,b} => c` is indistinguishable from
   `a => c` plus `b => c`.
 
-- [`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+- [`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
   accepts any of the 50 interest measures as `weight`.
 
 - Directedness is derived rather than assumed. Sequential rules are
@@ -96,23 +95,23 @@
   asymmetric; lift, support, kappa, jaccard, cosine, phi and leverage
   are symmetric, so a lift-weighted co-occurrence network is undirected.
 
-- [`rule_key()`](https://mohsaqr.github.io/dynarules/reference/rule_key.md)
+- [`rule_key()`](https://pak.dynasite.org/dynarules/reference/rule_key.md)
   draws the size and colour key for a rule-level network.
 
 ## dynarules 0.3.0
 
 - Transaction layer:
-  [`item_frequency()`](https://mohsaqr.github.io/dynarules/reference/item_frequency.md),
-  [`cross_table()`](https://mohsaqr.github.io/dynarules/reference/cross_table.md),
-  [`affinity()`](https://mohsaqr.github.io/dynarules/reference/affinity.md),
-  [`support_of()`](https://mohsaqr.github.io/dynarules/reference/support_of.md),
-  [`sample_transactions()`](https://mohsaqr.github.io/dynarules/reference/sample_transactions.md),
-  [`random_transactions()`](https://mohsaqr.github.io/dynarules/reference/random_transactions.md),
-  [`add_complement()`](https://mohsaqr.github.io/dynarules/reference/add_complement.md),
-  [`aggregate_items()`](https://mohsaqr.github.io/dynarules/reference/aggregate_items.md),
-  [`read_transactions()`](https://mohsaqr.github.io/dynarules/reference/read_transactions.md).
+  [`item_frequency()`](https://pak.dynasite.org/dynarules/reference/item_frequency.md),
+  [`cross_table()`](https://pak.dynasite.org/dynarules/reference/cross_table.md),
+  [`affinity()`](https://pak.dynasite.org/dynarules/reference/affinity.md),
+  [`support_of()`](https://pak.dynasite.org/dynarules/reference/support_of.md),
+  [`sample_transactions()`](https://pak.dynasite.org/dynarules/reference/sample_transactions.md),
+  [`random_transactions()`](https://pak.dynasite.org/dynarules/reference/random_transactions.md),
+  [`add_complement()`](https://pak.dynasite.org/dynarules/reference/add_complement.md),
+  [`aggregate_items()`](https://pak.dynasite.org/dynarules/reference/aggregate_items.md),
+  [`read_transactions()`](https://pak.dynasite.org/dynarules/reference/read_transactions.md).
 
-- [`discretize_items()`](https://mohsaqr.github.io/dynarules/reference/discretize_items.md)
+- [`discretize_items()`](https://pak.dynasite.org/dynarules/reference/discretize_items.md)
   for numeric vectors and data.frames, with frequency, interval, cluster
   and fixed methods.
 
@@ -122,31 +121,31 @@
 
 - Verified against arules: weighted support matches `weclat()`, all
   transaction verbs match their arules counterparts, and
-  [`discretize_items()`](https://mohsaqr.github.io/dynarules/reference/discretize_items.md)
+  [`discretize_items()`](https://pak.dynasite.org/dynarules/reference/discretize_items.md)
   matches on all four methods.
 
 ## dynarules 0.2.0
 
 - All 50 scalar interest measures via
-  [`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md),
+  [`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md),
   catalogued by
-  [`list_measures()`](https://mohsaqr.github.io/dynarules/reference/list_measures.md),
+  [`list_measures()`](https://pak.dynasite.org/dynarules/reference/list_measures.md),
   each verified identical to `arules::interestMeasure()`.
 
-- [`itemsets()`](https://mohsaqr.github.io/dynarules/reference/itemsets.md)
+- [`itemsets()`](https://pak.dynasite.org/dynarules/reference/itemsets.md)
   with the four condensed targets: frequent, closed, maximal and
   generator.
 
-- [`is_redundant()`](https://mohsaqr.github.io/dynarules/reference/is_redundant.md),
-  [`is_significant()`](https://mohsaqr.github.io/dynarules/reference/is_significant.md)
+- [`is_redundant()`](https://pak.dynasite.org/dynarules/reference/is_redundant.md),
+  [`is_significant()`](https://pak.dynasite.org/dynarules/reference/is_significant.md)
   and
-  [`is_maximal()`](https://mohsaqr.github.io/dynarules/reference/is_maximal.md),
+  [`is_maximal()`](https://pak.dynasite.org/dynarules/reference/is_maximal.md),
   also available as arguments to
-  [`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md).
+  [`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md).
 
 - Six plot types via `plot(type =)`.
 
-- [`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md)
+- [`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md)
   gains `min_length` and `appearance`.
 
 ## dynarules 0.1.0

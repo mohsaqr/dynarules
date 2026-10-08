@@ -34,7 +34,7 @@ rules(fit, min_lift = 1.5, items = "reflect", side = "consequent")
 
 Wide data.frames, lists of vectors, and binary matrices are also
 accepted; the event-log grammar can be passed straight to
-[`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md).
+[`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md).
 
 ## Preparing transactions
 
@@ -82,8 +82,8 @@ measures(fit, measure = "all", counts = TRUE)     # everything + the 2x2 table
 ## Which rules are worth keeping
 
 Predicates return one logical per rule, and
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md)
-takes them as arguments — so filtering never means subsetting by hand:
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md) takes
+them as arguments — so filtering never means subsetting by hand:
 
 ``` r
 

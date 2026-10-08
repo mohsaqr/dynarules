@@ -13,7 +13,7 @@ sample_transactions(x, size = NULL, replace = FALSE, prob = NULL)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - size:
@@ -34,8 +34,8 @@ A `dyna_transactions` object holding the sampled transactions.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md),
-[`bootstrap_rules()`](https://mohsaqr.github.io/dynarules/reference/bootstrap_rules.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md),
+[`bootstrap_rules()`](https://pak.dynasite.org/dynarules/reference/bootstrap_rules.md)
 
 ## Examples
 

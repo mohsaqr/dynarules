@@ -9,10 +9,10 @@ followed (not necessarily immediately) by `discuss` tend to contain
 `reflect` after both.
 
 Accepts a ready
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 object, or raw data plus the event-log grammar arguments, which are
 forwarded to
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md).
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md).
 
 ## Usage
 
@@ -45,7 +45,7 @@ dynarules(
 - x:
 
   A `dyna_transactions` object, or raw data accepted by
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   (long event log, wide data.frame, list, binary matrix).
 
 - type:
@@ -83,7 +83,7 @@ dynarules(
 - actor, action, time, session, unit, window, step:
 
   Event-log grammar, forwarded to
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   when `x` is raw data.
 
 - weights:
@@ -133,9 +133,9 @@ An object of class `"dynarules"`:
 - transactions:
 
   The `dyna_transactions` object mined, kept so
-  [`bootstrap_rules()`](https://mohsaqr.github.io/dynarules/reference/bootstrap_rules.md)
+  [`bootstrap_rules()`](https://pak.dynasite.org/dynarules/reference/bootstrap_rules.md)
   and
-  [`permute_rules()`](https://mohsaqr.github.io/dynarules/reference/permute_rules.md)
+  [`permute_rules()`](https://pak.dynasite.org/dynarules/reference/permute_rules.md)
   can re-mine.
 
 ## Details
@@ -148,11 +148,11 @@ pruning step exploits.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md),
-[`bootstrap_rules()`](https://mohsaqr.github.io/dynarules/reference/bootstrap_rules.md),
-[`permute_rules()`](https://mohsaqr.github.io/dynarules/reference/permute_rules.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md),
+[`bootstrap_rules()`](https://pak.dynasite.org/dynarules/reference/bootstrap_rules.md),
+[`permute_rules()`](https://pak.dynasite.org/dynarules/reference/permute_rules.md)
 
 ## Examples
 

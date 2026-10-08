@@ -22,8 +22,8 @@ A logical vector with one entry per mined rule.
 
 ## See also
 
-[`itemsets()`](https://mohsaqr.github.io/dynarules/reference/itemsets.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md)
+[`itemsets()`](https://pak.dynasite.org/dynarules/reference/itemsets.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md)
 
 ## Examples
 

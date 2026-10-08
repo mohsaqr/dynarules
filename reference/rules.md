@@ -54,19 +54,19 @@ rules(
 - significant:
 
   Keep only rules that beat independence; see
-  [`is_significant()`](https://mohsaqr.github.io/dynarules/reference/is_significant.md).
+  [`is_significant()`](https://pak.dynasite.org/dynarules/reference/is_significant.md).
   Default `FALSE`.
 
 - maximal:
 
   Keep only rules built on a maximal pattern; see
-  [`is_maximal()`](https://mohsaqr.github.io/dynarules/reference/is_maximal.md).
+  [`is_maximal()`](https://pak.dynasite.org/dynarules/reference/is_maximal.md).
   Default `FALSE`.
 
 - alpha, adjust:
 
   Passed to
-  [`is_significant()`](https://mohsaqr.github.io/dynarules/reference/is_significant.md)
+  [`is_significant()`](https://pak.dynasite.org/dynarules/reference/is_significant.md)
   when `significant = TRUE`.
 
 - top:

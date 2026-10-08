@@ -18,7 +18,7 @@ predict(object, newdata = NULL, type = c("class", "rule"), ...)
 - newdata:
 
   Transactions to classify: a `dyna_transactions` object or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts. Defaults to the training data.
 
 - type:
@@ -36,7 +36,7 @@ A character vector of predictions, or an integer vector of rule indices.
 
 ## See also
 
-[`cba()`](https://mohsaqr.github.io/dynarules/reference/cba.md)
+[`cba()`](https://pak.dynasite.org/dynarules/reference/cba.md)
 
 ## Examples
 

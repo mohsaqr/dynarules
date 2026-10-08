@@ -34,16 +34,16 @@ A logical vector with one entry per mined rule.
 
 This is a test against *chance co-occurrence given the item margins*. It
 is not the same question as
-[`permute_rules()`](https://mohsaqr.github.io/dynarules/reference/permute_rules.md),
+[`permute_rules()`](https://pak.dynasite.org/dynarules/reference/permute_rules.md),
 which asks whether a rule survives destroying the structure of the
 transactions themselves; use that one when the transaction structure is
 what you are arguing about.
 
 ## See also
 
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`permute_rules()`](https://mohsaqr.github.io/dynarules/reference/permute_rules.md),
-[`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md)
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`permute_rules()`](https://pak.dynasite.org/dynarules/reference/permute_rules.md),
+[`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md)
 
 ## Examples
 

@@ -34,17 +34,17 @@ rule_induction(
 - appearance:
 
   Optional list restricting where items may occur, as in
-  [`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md).
+  [`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md).
   `lhs` and `rhs` whitelist each side.
 
 ## Value
 
 A `dynarules` object carrying the induced rules. Everything that works
 on a mined model –
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md),
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html),
-[`as_network()`](https://mohsaqr.github.io/dynarules/reference/as_network.md)
+[`as_network()`](https://pak.dynasite.org/dynarules/reference/as_network.md)
 – works on it.
 
 ## Details
@@ -58,8 +58,8 @@ them does require re-mining.
 
 ## See also
 
-[`dynarules()`](https://mohsaqr.github.io/dynarules/reference/dynarules.md),
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md)
+[`dynarules()`](https://pak.dynasite.org/dynarules/reference/dynarules.md),
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md)
 
 ## Examples
 

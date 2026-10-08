@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dynarules</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="dynarules-040">dynarules 0.4.0<a class="anchor" aria-label="anchor" href="#dynarules-040"></a></h2>
-<ul><li><p>Networks are rendered by cograph. <code>plot(type = "graph")</code> hands the object to <code><a href="https://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code> through the <code>meta$splot</code> producer contract instead of drawing its own layout. The <code>grid</code> dependency is gone.</p></li>
+<ul><li><p>Networks are rendered by cograph. <code>plot(type = "graph")</code> hands the object to <code>cograph::splot()</code> through the <code>meta$splot</code> producer contract instead of drawing its own layout. The <code>grid</code> dependency is gone.</p></li>
 <li><p><code><a href="../reference/as_network.html">as_network()</a></code> gains <code>level = "rule"</code>, the standard association-rule graph with one node per rule. It keeps the conjunction the item-level collapse loses: under <code>level = "item"</code>, <code>{a,b} =&gt; c</code> is indistinguishable from <code>a =&gt; c</code> plus <code>b =&gt; c</code>.</p></li>
 <li><p><code><a href="../reference/as_network.html">as_network()</a></code> accepts any of the 50 interest measures as <code>weight</code>.</p></li>
 <li><p>Directedness is derived rather than assumed. Sequential rules are always directed; co-occurrence rules only when the weight is asymmetric. Confidence, conviction and Laplace accuracy are asymmetric; lift, support, kappa, jaccard, cosine, phi and leverage are symmetric, so a lift-weighted co-occurrence network is undirected.</p></li>

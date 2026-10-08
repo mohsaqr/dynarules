@@ -14,7 +14,7 @@ cross_table(x, measure = c("count", "support", "lift"), diagonal = FALSE)
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - measure:
@@ -35,8 +35,8 @@ A tidy `data.frame`: `item1`, `item2`, `value`.
 
 ## See also
 
-[`item_frequency()`](https://mohsaqr.github.io/dynarules/reference/item_frequency.md),
-[`affinity()`](https://mohsaqr.github.io/dynarules/reference/affinity.md)
+[`item_frequency()`](https://pak.dynasite.org/dynarules/reference/item_frequency.md),
+[`affinity()`](https://pak.dynasite.org/dynarules/reference/affinity.md)
 
 ## Examples
 

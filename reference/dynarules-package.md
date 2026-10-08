@@ -11,7 +11,7 @@ Useful links:
 
 - <https://github.com/mohsaqr/dynarules>
 
-- <https://mohsaqr.github.io/dynarules/>
+- <https://pak.dynasite.org/dynarules/>
 
 - Report bugs at <https://github.com/mohsaqr/dynarules/issues>
 

@@ -23,9 +23,9 @@ A logical vector with one entry per mined rule.
 
 ## See also
 
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`is_significant()`](https://mohsaqr.github.io/dynarules/reference/is_significant.md),
-[`is_maximal()`](https://mohsaqr.github.io/dynarules/reference/is_maximal.md)
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`is_significant()`](https://pak.dynasite.org/dynarules/reference/is_significant.md),
+[`is_maximal()`](https://pak.dynasite.org/dynarules/reference/is_maximal.md)
 
 ## Examples
 

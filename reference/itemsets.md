@@ -54,8 +54,8 @@ A tidy `data.frame` with one row per pattern: `pattern`, `size`,
 
 ## See also
 
-[`rules()`](https://mohsaqr.github.io/dynarules/reference/rules.md),
-[`measures()`](https://mohsaqr.github.io/dynarules/reference/measures.md)
+[`rules()`](https://pak.dynasite.org/dynarules/reference/rules.md),
+[`measures()`](https://pak.dynasite.org/dynarules/reference/measures.md)
 
 ## Examples
 

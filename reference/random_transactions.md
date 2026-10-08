@@ -44,7 +44,7 @@ A `dyna_transactions` object.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 
 ## Examples
 

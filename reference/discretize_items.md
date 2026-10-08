@@ -77,7 +77,7 @@ with its numeric columns replaced by factors.
 
 ## See also
 
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 
 ## Examples
 

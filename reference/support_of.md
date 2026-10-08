@@ -14,7 +14,7 @@ support_of(x, itemsets, type = c("cooccurrence", "sequential"))
 - x:
 
   A `dyna_transactions` object, or anything
-  [`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+  [`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
   accepts.
 
 - itemsets:
@@ -32,8 +32,8 @@ A tidy `data.frame`: `pattern`, `size`, `support`, `count`.
 
 ## See also
 
-[`itemsets()`](https://mohsaqr.github.io/dynarules/reference/itemsets.md),
-[`transactions()`](https://mohsaqr.github.io/dynarules/reference/transactions.md)
+[`itemsets()`](https://pak.dynasite.org/dynarules/reference/itemsets.md),
+[`transactions()`](https://pak.dynasite.org/dynarules/reference/transactions.md)
 
 ## Examples
 
