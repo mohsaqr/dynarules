@@ -1,6 +1,6 @@
 Package: dynarules
 Title: Association and Sequential Rule Mining for Temporal Event Data
-Version: 0.5.1
+Version: 0.5.2
 Authors@R:
     person("Mohammed", "Saqr", email = "ueflaunit@gmail.com",
            role = c("aut", "cre"))
@@ -17,7 +17,7 @@ Description: Mines association rules and order-aware sequential rules from
     rules).
 License: GPL-3
 URL: https://github.com/mohsaqr/dynarules,
-    https://mohsaqr.github.io/dynarules/
+    https://pak.dynasite.org/dynarules/
 BugReports: https://github.com/mohsaqr/dynarules/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
